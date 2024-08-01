@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Failed</title>
+    <link rel="stylesheet" href="{% static 'css/verification_styles.css'%}">
+</head>
+<body>
+    <div class="container">
+        <h1>Verification Failed</h1>
+        <p>{{error}}</p>
+        <button onclick="window.location.href='index.html'">Resend Email</button>
+    </div>
+</body>
+</html>

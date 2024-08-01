@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <link rel="stylesheet" href="{% static 'css/verification_styles.css'%}">
+</head>
+<body>
+    <div class="container">
+        <img src="{% static 'images/header-logo2.png' %}" alt="Company Logo" class="logo">
+        <h1>Company Name</h1>
+        <h2>Email Verification</h2>
+        <p>Enter the 6-digit code sent to your email:</p>
+        <div class="code-input">
+            <input type="text" id="digit1" maxlength="1">
+            <input type="text" id="digit2" maxlength="1">
+            <input type="text" id="digit3" maxlength="1">
+            <input type="text" id="digit4" maxlength="1">
+            <input type="text" id="digit5" maxlength="1">
+            <input type="text" id="digit6" maxlength="1">
+        </div>
+        <p id="timer">Time left: <span id="countdown">15:00</span></p>
+        <button id="resend">Resend Code</button>
+    </div>
+    <script src="{% static 'js/verification_script.js'%}"></script>
+</body>
+</html>
