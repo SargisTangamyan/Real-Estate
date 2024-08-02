@@ -6,6 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Email Verification</title>
     <link rel="stylesheet" href="{% static 'css/verification_styles.css'%}">
+    <style>
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .alert.d-none {
+            display: none;
+        }
+
+        .alert.error {
+            color: #fff; /* White text color for contrast */
+            background-color: #d9534f; /* Red background color */
+            border: 1px solid #d9534f; /* Red border */
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -21,7 +39,10 @@
             <input type="text" id="digit5" maxlength="1">
             <input type="text" id="digit6" maxlength="1">
         </div>
-        <p id="timer">Time left: <span id="countdown">15:00</span></p>
+        <div class="ui_kit_message_box">
+            <div id="errorMessage" class="alert d-none" role="alert"></div>
+        </div>
+        <p>Time left: <span id="countdown" data-remaining-time="900"></span></p>
         <button id="resend">Resend Code</button>
     </div>
     <script src="{% static 'js/verification_script.js'%}"></script>

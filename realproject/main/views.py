@@ -12,6 +12,25 @@ from django.core.mail import EmailMultiAlternatives
 # from this app
 from .forms import RegistrationForm
 
+def send_verification(request, user_data=None):
+    if user_data:
+        request.session['user_data'] = user_data
+        request.session['verification_time'] = now().isoformat()
+        request.session['user_data'] = user_data
+    verification_code = random.randint(100000, 999999)
+    request.session['verification_code'] = verification_code
+    subject = 'Verify your email'
+    from_email = settings.EMAIL_HOST_USER
+    to_email = user_data['email']
+    text_content = f'Your verification code is {verification_code}'
+    html_content = render_to_string('account/verification_email.html', {
+        'verification_code': str(verification_code),
+    })
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+
 @csrf_exempt
 def validate_registration(request):
     if request.method == 'POST':
@@ -29,21 +48,7 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user_data = form.cleaned_data
-            request.session['user_data'] = user_data
-            verification_code = random.randint(100000, 999999)
-            request.session['verification_code'] = verification_code
-            request.session['verification_time'] = now().isoformat()
-            request.session['user_data'] = user_data
-            subject = 'Verify your email'
-            from_email = settings.EMAIL_HOST_USER
-            to_email = user_data['email']
-            text_content = f'Your verification code is {verification_code}'
-            html_content = render_to_string('account/verification_email.html', {
-                'verification_code': str(verification_code),
-            })
-            msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
-            msg.attach_alternative(html_content, "text/html")
-            msg.send()
+            send_verification(request, user_data)
             return JsonResponse({'success': True})  # Redirect to a page of your choice
         else:
             # Form is invalid, re-render the form with errors
