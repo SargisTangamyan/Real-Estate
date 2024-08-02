@@ -68,5 +68,7 @@ def verification_success(request):
 
 
 
-def verification_failed(request, message=None):
+def verification_failed(request):
+    
+    message = request.GET.get('message', 'Default message if none provided')
     return render(request, 'account/verification_failed.html', {'message': message})

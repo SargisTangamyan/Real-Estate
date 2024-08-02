@@ -5,13 +5,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verification Failed</title>
-    <link rel="stylesheet" href="{% static 'css/verification_styles.css'%}">
+    <!-- <link rel="stylesheet" href="{% static 'css/verification_styles.css'%}"> -->
+     <style>
+
+        /* Basic Reset */
+        body, h1, p, button {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Container Styling */
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        /* Heading Styling */
+        h1 {
+            font-size: 2rem;
+            color: #e74c3c; /* Red color for the error */
+            margin-bottom: 1rem;
+        }
+
+        /* Message Styling */
+        p {
+            font-size: 1rem;
+            color: #e74c3c; /* Red color for the error message */
+            margin-bottom: 1.5rem;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #3498db; /* Blue color */
+            border: none;
+            border-radius: 5px;
+            padding: 0.75rem 1.5rem;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Button Hover Effect */
+        button:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+        }
+
+        /* Link Styling inside Button */
+        button a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+     </style>
 </head>
 <body>
     <div class="container">
         <h1>Verification Failed</h1>
-        <p>{{error}}</p>
-        <button onclick="window.location.href='index.html'">Resend Email</button>
+        {% if message %}
+            <p style="color: red;">{{message}}</p>
+        {% endif %}
+        <button ><a href="{% url 'homepage:homepage' %}">Home</a></button>
     </div>
 </body>
 </html>
