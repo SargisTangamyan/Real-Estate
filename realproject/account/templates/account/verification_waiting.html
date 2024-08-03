@@ -42,7 +42,7 @@
         <div class="ui_kit_message_box">
             <div id="errorMessage" class="alert d-none" role="alert"></div>
         </div>
-        <p>Time left: <span id="countdown" data-remaining-time="900"></span></p>
+        <p>Time left: <span id="countdown" data-remaining-time="{{remaining_time}}"></span></p>
         <button id="resend">Resend Code</button>
     </div>
     <script src="{% static 'js/verification_script.js'%}"></script>

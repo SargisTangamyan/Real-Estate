@@ -21,7 +21,7 @@ def send_verification(request, user_data=None):
     request.session['verification_code'] = verification_code
     subject = 'Verify your email'
     from_email = settings.EMAIL_HOST_USER
-    to_email = user_data['email']
+    to_email = request.session['email']
     text_content = f'Your verification code is {verification_code}'
     html_content = render_to_string('account/verification_email.html', {
         'verification_code': str(verification_code),
@@ -48,6 +48,8 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user_data = form.cleaned_data
+            email = user_data['email']
+            request.session['email'] = email
             send_verification(request, user_data)
             return JsonResponse({'success': True})  # Redirect to a page of your choice
         else:

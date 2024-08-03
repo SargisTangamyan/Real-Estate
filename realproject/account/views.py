@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.core.exceptions import ValidationError
 # From the main
 from main.models import CustomUser
+from main.views import send_verification
 
 VERIFICATION_EXPIRATION_MINUTES = 15
 
@@ -40,22 +41,23 @@ def waiting(request):
         else:
             return JsonResponse({'message': 'Invalid input. Please try again.'}, status=400)
     
-    # Calculating the remaining time
-    verification_start_time = request.session.get('verification_time')
-    print(verification_start_time)
-    if verification_start_time:
-        verification_start_time = datetime.datetime.fromisoformat(verification_start_time)
-        expiration_time = verification_start_time + datetime.timedelta(minutes=VERIFICATION_EXPIRATION_MINUTES)
-        remaining_time = max(0, (expiration_time - now()).total_seconds())
-    else:
-        remaining_time = VERIFICATION_EXPIRATION_MINUTES * 60  # Default timer duration if not set
-    print(remaining_time)
-    return render(request, 'account/verification_waiting.html', {'remaining_time': remaining_time})
+    if request.session.get('verification_code'):
+        # Calculating the remaining time
+        verification_start_time = request.session.get('verification_time')
+        if verification_start_time:
+            verification_start_time = datetime.datetime.fromisoformat(verification_start_time)
+            expiration_time = verification_start_time + datetime.timedelta(minutes=VERIFICATION_EXPIRATION_MINUTES)
+            remaining_time = max(0, (expiration_time - now()).total_seconds())
+        else:
+            remaining_time = VERIFICATION_EXPIRATION_MINUTES * 60  # Default timer duration if not set
+        return render(request, 'account/verification_waiting.html', {'remaining_time': remaining_time})
+    return redirect('homepage:homepage')
 
 
 
 def start_verification(request):
     if request.method == 'POST':
+        send_verification(request)
         # Store the current time as the start time for the verification
         request.session['verification_time'] = now().isoformat()
         return JsonResponse({'status': 'success'})
@@ -69,6 +71,6 @@ def verification_success(request):
 
 
 def verification_failed(request):
-    
+
     message = request.GET.get('message', 'Default message if none provided')
     return render(request, 'account/verification_failed.html', {'message': message})
