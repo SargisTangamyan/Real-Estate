@@ -12,6 +12,7 @@
 <!-- Title -->
 <title>{% block title %}Real Estate{% endblock title %}</title>
 <!-- Favicon -->
+ {% block additional_css %}{% endblock additional_css %}
 <link href="{% static 'images/favicon.ico'%}" sizes="128x128" rel="shortcut icon" type="image/x-icon" />
 <link href="{% static 'images/favicon.ico'%}" sizes="128x128" rel="shortcut icon" />
 
@@ -49,8 +50,25 @@
 	.error-list li {
 		margin-bottom: 5px;
 	}
-</style>
+	.terms-and-conditions-link {
+    color: #007bff; /* Blue color for the link */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Make the text bold */
+    font-size: 13px; /* Adjust font size as needed */
+    transition: color 0.3s, text-decoration 0.3s; /* Smooth transition for hover effects */
+	}
 
+	/* Hover effect */
+	.terms-and-conditions-link:hover {
+		color: #0056b3; /* Darker blue on hover */
+		text-decoration: underline; /* Add underline on hover */
+	}
+
+	/* Focus effect (for accessibility) */
+	.terms-and-conditions-link:focus {
+		outline: 2px solid #0056b3; /* Add an outline for better focus visibility */
+		outline-offset: 2px; /* Offset the outline slightly */
+	}
 </style>
 </head>
 <body>
@@ -71,7 +89,7 @@
 		                <span class="icon-bar"></span>
 		            </button>
 		        </div>
-		        <a href="#" class="navbar_brand float-left dn-smd">
+		        <a href="{% url 'homepage:homepage' %}" class="navbar_brand float-left dn-smd">
 		            <img class="logo1 img-fluid" src="{% static 'images/header-logo2.png' %}" alt="header-logo.png">
 		            <img class="logo2 img-fluid" src="{% static 'images/header-logo2.png' %}" alt="header-logo2.png">
 		        </a>
@@ -388,7 +406,7 @@
 
 										<div class="form-group custom-control custom-checkbox">
 											<input type="checkbox" class="custom-control-input"  id="exampleCheck2" onclick="toggleSubmitButton()">
-											<label class="custom-control-label" for="exampleCheck2">I have read and accept the Terms and Privacy Policy?</label>
+											<label class="custom-control-label" for="exampleCheck2">I have read and accept the <a class="terms-and-conditions-link" href="{% url 'project_info:terms_conditions' %}">Terms and Privacy Policy?</a></label>
 										</div>
 										<button type="submit" id='submit-register' class="btn btn-log btn-block btn-thm" disabled >Sign Up</button>
 									</form>
@@ -549,7 +567,7 @@
 	                    <li><a href="page-register.html">Register</a></li>
 	                    <li><a href="page-service.html">Service</a></li>
 		                <li><a href="page-error.html">404 Page</a></li>
-		                <li><a href="page-terms.html">Terms and Conditions</a></li>
+		                <li><a href="{% url 'project_info:terms_conditions' %}">Terms and Conditions</a></li>
 		                <li><a href="page-ui-element.html">UI Elements</a></li>
 					</ul>
 				</li>
@@ -581,7 +599,7 @@
                     <h4>Quick Links</h4>
                     <ul class="list-unstyled">
                         <li><a href="#">About Us</a></li>
-                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="{% url 'project_info:terms_conditions' %}">Terms & Conditions</a></li>
                         <li><a href="#">User’s Guide</a></li>
                         <li><a href="#">Support Center</a></li>
                         <li><a href="#">Press Info</a></li>
@@ -655,6 +673,10 @@
 <a class="scrollToHome" href="#"><i class="flaticon-arrows"></i></a>
 </div>
 {% include "include/main_js.html" %}
+
+{% block additional_js %}
+
+{% endblock additional_js %}
 
 <!-- My own JS scripts -->
 

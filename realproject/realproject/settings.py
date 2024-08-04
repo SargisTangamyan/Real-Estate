@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     # Applications
     'account.apps.AccountConfig',
     'main.apps.MainConfig',
+    'project_info.apps.ProjectInfoConfig',
 
     # Additional
     'phonenumber_field',

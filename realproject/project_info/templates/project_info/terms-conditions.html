@@ -1,0 +1,128 @@
+{% extends "extend/base.html" %}
+{% load static %}
+{% block title %}Terms and Conditions{% endblock title %}
+{% block additional_css %}
+<style>
+	html {
+		scroll-behavior: smooth;
+	}
+</style>
+{% endblock additional_css %}
+{% block content %}
+	<!-- Inner Page Breadcrumb -->
+	<section class="inner_page_breadcrumb">
+		<div class="container">
+			<div class="row">
+				<div class="col-xl-6">
+					<div class="breadcrumb_content">
+						<ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{% url 'homepage:homepage' %}">Home</a></li>
+						    <li class="breadcrumb-item active" aria-current="page">Terms and Condition</li>
+						</ol>
+						<h4 class="breadcrumb_title">Terms and Condition</h4>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Our Terms & Conditions -->
+	<section class="our-terms bgc-f7">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8 col-xl-8">
+					{% with info=terms_conditions %}
+					<div class="terms_condition_grid">
+						<div id='welcome-text' class="grids mb30">
+							<h4>Welcome Text</h4>
+							{{info.welcome_text|safe}}
+						</div>
+						<div id='our-terms' class="grids mb30">
+							<h4>Our Terms</h4>
+					    	{{info.our_terms|safe}}
+						</div>
+						<div id='conditions' class="grids mb30">
+							<h4>Conditions</h4>
+							{{info.conditions|safe}}
+						</div>
+						<div id='your-privacy' class="grids mb30">
+							<h4>Your Privacy</h4>
+							{{info.your_privacy|safe}}
+						</div>
+						<div id='information-we-collect' class="grids mb30">
+							<h4>Informations We Collect</h4>
+							{{info.information_we_collect|safe}}
+						</div>
+					</div>
+					{% endwith %}
+				</div>
+				<div class="col-lg-4 col-xl-4">
+					<div class="terms_condition_widget">
+						<h4 class="title">Navigation</h4>
+						<div class="widget_list">
+							<ul class="list_details">
+								<li><a href="#welcom-text"><i class="fa fa-caret-right mr10"></i>Welcome Text</a></li>
+								<li><a href="#our-terms"><i class="fa fa-caret-right mr10"></i>Our Terms</a></li>
+								<li><a href="#conditions"><i class="fa fa-caret-right mr10"></i>Conditions</a></li>
+								<li><a href="#your-privacy"><i class="fa fa-caret-right mr10"></i>Your Privacy</a></li>
+								<li><a href="#information-we-collect"><i class="fa fa-caret-right mr10"></i>Informations We Collect</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Start Partners -->
+	<section class="start-partners bgc-thm pt50 pb50">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8">
+					<div class="start_partner tac-smd">
+						<h2>Discover a New Realm in Synergy Terrace Realty</h2>
+						<p>We only work with the best companies around the globe</p>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="parner_reg_btn text-right tac-smd">
+						<a class="btn btn-thm2" href="#">Register Now</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+{% endblock content %}
+{% block additional_js %}
+	<script type="text/javascript" src="{% static 'js/progressbar.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/slider.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/timepicker.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/wow.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			var navHeight = 100; // Height in pixels
+
+			// Adjust scroll position when clicking on anchor links
+			document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+				anchor.addEventListener('click', function(e) {
+					e.preventDefault();
+
+					// Get the target element
+					var targetElement = document.querySelector(this.getAttribute('href'));
+
+					if (targetElement) {
+						// Adjust the scroll position
+						var offsetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navHeight;
+
+						window.scrollTo({
+							top: offsetPosition,
+							behavior: 'smooth'
+						});
+					}
+				});
+			});
+		});
+	</script>
+{% endblock additional_js %}
