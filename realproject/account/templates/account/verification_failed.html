@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verification Failed</title>
-    <!-- <link rel="stylesheet" href="{% static 'css/verification_styles.css'%}"> -->
-     <style>
-
+    <style>
         /* Basic Reset */
         body, h1, p, button {
             margin: 0;
@@ -74,15 +72,92 @@
             color: #fff;
         }
 
-     </style>
+        /* Resend Button Styling */
+        .resend-button {
+            display: none;
+            margin-top: 1rem;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Verification Failed</h1>
         {% if message %}
-            <p style="color: red;">{{message}}</p>
+            <p style="color: red;">{{ message }}</p>
         {% endif %}
-        <button ><a href="{% url 'homepage:homepage' %}">Home</a></button>
+        <button><a href="{% url 'homepage:homepage' %}">Home</a></button>
+        <button id="resendButton" class="resend-button"><a href="#" id="resendLink">Resend Verification</a></button>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const resendButton = document.getElementById('resendButton');
+            const resendLink = document.getElementById('resendLink');
+            
+            // Retrieve the value of 'resendUsed' from localStorage
+            const resendUsed = "{{ resendUsed|escapejs }}";
+            // Check if resendUsed is not true
+            if ( resendUsed === 'false') {
+                resendButton.style.display = 'inline-block'; // Show resend button
+            } else {
+                resendButton.style.display = 'none'; // Hide resend button
+            }
+    
+            // Handle resend button click
+            resendLink.addEventListener('click', async function(event) {
+                event.preventDefault();
+                
+                // Only proceed if resendUsed is not true
+                if (resendUsed !== 'true') {
+                    try {
+                        localStorage.setItem('resendUsed', 'true'); // Set resendUsed to true
+    
+                        const response = await fetch('/account/start_verification/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': getCookie('csrftoken')
+                            },
+                            body: new URLSearchParams({
+                                // Add any data you need to send here
+                            })
+                        });
+            
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+            
+                        // Redirect after successful request
+                        window.location.href = '{% url 'account:waiting' %}';
+                    } catch (error) {
+                        console.error('Error:', error);
+                        // Optionally, handle the error (e.g., show a message to the user)
+                        alert('Failed to resend verification. Please try again later.');
+                    }
+                } else {
+                    // If resendUsed is already true, show an appropriate message or take action
+                    alert('You have already requested to resend.');
+                }
+            });
+        });
+        
+        // Helper function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+    
+    
 </body>
 </html>

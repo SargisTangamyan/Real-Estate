@@ -5,6 +5,7 @@ from django.utils.timezone import now
 from django.urls import reverse
 from django.http import JsonResponse
 from django.core.exceptions import ValidationError
+from django.views.decorators.csrf import csrf_exempt
 # From the main
 from main.models import CustomUser
 from main.views import send_verification
@@ -31,11 +32,12 @@ def waiting(request):
                     )
 
                     del request.session['user_data']
+                    del request.session['email']
                     del request.session['verification_code']
                     del request.session['verification_time']
                     return HttpResponseRedirect(reverse('account:verification_success'))
                 else:
-                    return JsonResponse({'message': 'Invalid code. Please try again.'}, status=400)
+                    return JsonResponse({'message': 'Invalid code. Only 1 try left.'}, status=400)
             else:
                 return JsonResponse({'message': 'Verification code has expired.'}, status=400)
         else:
@@ -54,12 +56,12 @@ def waiting(request):
     return redirect('homepage:homepage')
 
 
-
+@csrf_exempt
 def start_verification(request):
     if request.method == 'POST':
         send_verification(request)
         # Store the current time as the start time for the verification
-        request.session['verification_time'] = now().isoformat()
+        request.session['verification_time'] = now().isoformat() # Can be deleted (The process is taken by the send_verification function)
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'failed'}, status=400)
 
@@ -71,6 +73,13 @@ def verification_success(request):
 
 
 def verification_failed(request):
-
-    message = request.GET.get('message', 'Default message if none provided')
-    return render(request, 'account/verification_failed.html', {'message': message})
+    message = request.GET.get('message', 'Error occurred')
+    resendUsed = request.GET.get('resendUsed', False)
+    print(resendUsed)
+    if resendUsed != 'false':
+        del request.session['user_data']
+        del request.session['email']
+        del request.session['verification_code']
+        del request.session['verification_time']
+        print('-------cleaned.')
+    return render(request, 'account/verification_failed.html', {'message': message, 'resendUsed': resendUsed})

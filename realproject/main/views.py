@@ -13,12 +13,11 @@ from django.core.mail import EmailMultiAlternatives
 from .forms import RegistrationForm
 
 def send_verification(request, user_data=None):
-    if user_data:
-        request.session['user_data'] = user_data
+    if not user_data:
         request.session['verification_time'] = now().isoformat()
-        request.session['user_data'] = user_data
     verification_code = random.randint(100000, 999999)
     request.session['verification_code'] = verification_code
+    request.session.set_expiry(30 * 60)
     subject = 'Verify your email'
     from_email = settings.EMAIL_HOST_USER
     to_email = request.session['email']
@@ -49,7 +48,10 @@ def register(request):
         if form.is_valid():
             user_data = form.cleaned_data
             email = user_data['email']
+            request.session['user_data'] = user_data
             request.session['email'] = email
+            request.session['verification_time'] = now().isoformat()
+            request.session.set_expiry(30 * 60)  # 30 minutes in seconds
             send_verification(request, user_data)
             return JsonResponse({'success': True})  # Redirect to a page of your choice
         else:
