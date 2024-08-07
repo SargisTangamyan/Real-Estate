@@ -4,8 +4,9 @@ from django.contrib.auth.password_validation import validate_password
 # From this app
 from .models import CustomUser
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
 from .models import CustomUser
+from django.contrib.auth import authenticate
 
 
 
@@ -71,3 +72,17 @@ class RegistrationForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+    
+
+# Login with the email
+class EmailLoginForm(AuthenticationForm):
+    username = forms.EmailField()
+    remember_me = forms.BooleanField(required=False)
+
+    def confirm_login_allowed(self, user):
+        """
+        Override this method to customize login validation.
+        """
+        super().confirm_login_allowed(user)
+
+    

@@ -1,6 +1,6 @@
 # Basic 
-from django.shortcuts import render, redirect, HttpResponse
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
 from django.views import View
 import random
@@ -8,9 +8,10 @@ from django.utils.timezone import now
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth import authenticate, login
 
 # from this app
-from .forms import RegistrationForm
+from .forms import RegistrationForm, EmailLoginForm
 
 def send_verification(request, user_data=None):
     if not user_data:
@@ -62,6 +63,27 @@ def register(request):
         print(form.errors)
         return HttpResponse("Something went wrong!")
 
+
+
+
+@csrf_exempt  # Only use this if you have other CSRF protection in place, not recommended for production
+def login_by_email(request):
+    if request.method == 'POST':
+        form = EmailLoginForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            remember_me = request.POST.get('remember_me', False)
+            if remember_me:
+                request.session.set_expiry(1209600)  # 2 weeks
+            else:
+                request.session.set_expiry(0)
+            login(request, user)
+            return JsonResponse({'success': True})
+        else:
+            errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'errors': errors}, status=400)
+    else:
+        return HttpResponseNotAllowed(['POST'])
 
 
 class Homepage(View):
