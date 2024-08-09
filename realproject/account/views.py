@@ -4,7 +4,7 @@ import datetime
 from django.utils.timezone import now
 from django.urls import reverse
 from django.http import JsonResponse
-from django.core.exceptions import ValidationError
+from django.contrib.auth import login
 from django.views.decorators.csrf import csrf_exempt
 # From the main
 from main.models import CustomUser
@@ -24,7 +24,7 @@ def waiting(request):
                 if code == str(verification_code):
                     user_data = request.session.get('user_data')
 
-                    CustomUser.objects.create_user(
+                    user = CustomUser.objects.create_user(
                         email=user_data['email'], 
                         password=user_data['password'], 
                         service=user_data['service'], 
@@ -35,6 +35,7 @@ def waiting(request):
                     del request.session['email']
                     del request.session['verification_code']
                     del request.session['verification_time']
+                    login(request, user)
                     return HttpResponseRedirect(reverse('account:verification_success'))
                 else:
                     return JsonResponse({'message': 'Invalid code. Only 1 try left.'}, status=400)

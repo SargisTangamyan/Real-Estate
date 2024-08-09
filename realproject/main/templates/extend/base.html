@@ -69,6 +69,7 @@
 		outline: 2px solid #0056b3; /* Add an outline for better focus visibility */
 		outline-offset: 2px; /* Offset the outline slightly */
 	}
+	
 </style>
 </head>
 <body>
@@ -262,7 +263,22 @@
 		            <li class="last">
 		                <a href="page-contact.html"><span class="title">Contact</span></a>
 		            </li>
-	                <li class="list-inline-item list_s"><a href="#" class="btn flaticon-user" data-toggle="modal" data-target=".bd-example-modal-lg"> <span class="dn-lg">Login/Register</span></a></li>
+	                {% if user.is_authenticated %}
+						<li class="nav-item dropdown user-menu">
+							<a href="#">
+								<span class="username">My account</span>
+							</a>
+							<ul class="dropdown-menu dropdown-menu-right">
+								<li><a class="dropdown-item" href="#account">Account</a></li>
+								<li><a class="dropdown-item" href="#settings">Settings</a></li>
+								<li><a class="dropdown-item" href="#messages">Messages</a></li>
+								<li><a class="dropdown-item" href="#listings">Listings</a></li>
+								<li><a class="dropdown-item" href="{% url 'homepage:logout' %}">Logout</a></li>
+							</ul>
+						</li>
+					{% else %}
+						<li class="list-inline-item list_s"><a href="#" class="btn flaticon-user" data-toggle="modal" data-target=".bd-example-modal-lg"> <span class="dn-lg">Login/Register</span></a></li>
+					{% endif %}
 	                <li class="list-inline-item add_listing home6"><a href="#"><span class="flaticon-plus"></span><span class="dn-lg"> Create Listing</span></a></li>
 		        </ul>
 		    </nav>
@@ -834,48 +850,59 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <!-- For the login -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('login-form');
-    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const form = document.getElementById('login-form');
+		const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+		const warningElement = document.getElementById('login-warning'); // Define warningElement here
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault(); // Prevent the default form submission
 
-        const formData = new FormData(form);
-        LoginUser(formData, csrfToken); // Call the LoginUser function
-    });
-});
+		form.addEventListener('submit', function(event) {
+			event.preventDefault(); // Prevent the default form submission
 
-function LoginUser(formData, csrfToken) {
-    fetch('/login/', {
-        method: 'POST', // Ensure the request method is POST
-        body: formData,
-        headers: {
-            'X-CSRFToken': csrfToken, // Include CSRF token for security
-            'Accept': 'application/json', // Indicate that we expect JSON response
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            location.reload(); // Reload the page on successful login
-        } else {
-            // Show general error message
-            const warningElement = document.getElementById('login-warning');
-            if (warningElement) {
-                warningElement.classList.remove('d-none'); // Remove 'd-none' to show the warning
-                warningElement.innerText = 'Invalid Login or Password'; // Set general error message
-            }
-        }
-    })
-    .catch(error => {
-        // Handle fetch or network errors
-        alert('An error occurred: ' + error.message);
-    });
-}
+			const formData = new FormData(form);
+			LoginUser(formData, csrfToken); // Call the LoginUser function
+		});
 
-</script>
+		// Add event listener to input fields to hide warning when user starts typing
+		form.querySelectorAll('input').forEach(input => {
+			input.addEventListener('input', function() {
+				if (warningElement) {
+					warningElement.classList.add('d-none'); // Add 'd-none' to hide the warning
+				}
+			});
+		});
+	});
+
+	function LoginUser(formData, csrfToken) {
+		fetch('/login/', {
+			method: 'POST', // Ensure the request method is POST
+			body: formData,
+			headers: {
+				'X-CSRFToken': csrfToken, // Include CSRF token for security
+				'Accept': 'application/json', // Indicate that we expect JSON response
+			}
+		})
+		.then(response => response.json())
+		.then(data => {
+			if (data.success) {
+				location.reload(); // Reload the page on successful login
+			} else {
+				// Show general error message
+				const warningElement = document.getElementById('login-warning');
+				if (warningElement) {
+					warningElement.classList.remove('d-none'); // Remove 'd-none' to show the warning
+					warningElement.innerText = 'Invalid Login or Password'; // Set general error message
+				}
+			}
+		})
+		.catch(error => {
+			// Handle fetch or network errors
+			alert('An error occurred: ' + error.message);
+		});
+	}
+
+	</script>
 	
 
 </body>

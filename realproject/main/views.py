@@ -8,7 +8,7 @@ from django.utils.timezone import now
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 # from this app
 from .forms import RegistrationForm, EmailLoginForm
@@ -42,6 +42,7 @@ def validate_registration(request):
             return JsonResponse({'success': False, 'errors': form.errors})
 
 
+# Registering the user
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
@@ -64,8 +65,7 @@ def register(request):
         return HttpResponse("Something went wrong!")
 
 
-
-
+# Logging the user in 
 @csrf_exempt  # Only use this if you have other CSRF protection in place, not recommended for production
 def login_by_email(request):
     if request.method == 'POST':
@@ -85,6 +85,11 @@ def login_by_email(request):
     else:
         return HttpResponseNotAllowed(['POST'])
 
+
+#Logging out
+def logout_user(request):
+    logout(request)
+    return render(request, 'account/logged_out.html', {})
 
 class Homepage(View):
     def get(self, request, *args, **kwargs):
