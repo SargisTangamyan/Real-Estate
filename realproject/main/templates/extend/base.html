@@ -273,7 +273,7 @@
 								<li><a class="dropdown-item" href="#settings">Settings</a></li>
 								<li><a class="dropdown-item" href="#messages">Messages</a></li>
 								<li><a class="dropdown-item" href="#listings">Listings</a></li>
-								<li><a class="dropdown-item" href="{% url 'homepage:logout' %}">Logout</a></li>
+								<li><a class="dropdown-item" href="{% url 'account:logout' %}">Logout</a></li>
 							</ul>
 						</li>
 					{% else %}
@@ -314,7 +314,7 @@
 					  		</div>
 					  		<div class="col-lg-6 col-xl-6">
 								<div class="login_form">
-									<form id="login-form" method='post' action="{% url 'homepage:login' %}"> {% csrf_token %}
+									<form id="login-form" method='post' action="{% url 'account:login' %}"> {% csrf_token %}
 										<div class="heading">
 											<h4>Login</h4>
 										</div>
@@ -365,7 +365,7 @@
 									<div class="heading">
 										<h4>Register</h4>
 									</div>
-									<form id="registrationForm" action="{% url 'homepage:register' %}" method='post'> {% csrf_token %}
+									<form id="registrationForm" action="{% url 'account:register' %}" method='post'> {% csrf_token %}
 										<div class="row">
 											<div class="col-lg-12">
 												<button type="submit" class="btn btn-block btn-fb"><i class="fa fa-facebook float-left mt5"></i> Login with Facebook</button>
@@ -791,7 +791,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(this);
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        fetch('/validate_registration/', {
+        fetch('account/validate_registration/', {
             method: 'POST',
             body: formData,
             headers: {
@@ -828,7 +828,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function registerUser(formData, csrfToken) {
-        fetch('/register/', {
+        fetch('account/register/', {
             method: 'POST',
             body: formData,
             headers: {
@@ -875,7 +875,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	function LoginUser(formData, csrfToken) {
-		fetch('/login/', {
+		fetch('account/login/', {
 			method: 'POST', // Ensure the request method is POST
 			body: formData,
 			headers: {
