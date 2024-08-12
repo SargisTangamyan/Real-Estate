@@ -48,7 +48,7 @@ def validate_registration(request):
             return JsonResponse({'success': False, 'errors': form.errors})
 
 
-# Registering the user
+# Registering the user in the base.html
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
@@ -71,7 +71,7 @@ def register(request):
         return HttpResponse("Something went wrong!")
 
 
-# Logging the user in 
+# Logging the user in in the base.html
 @csrf_exempt  # Only use this if you have other CSRF protection in place, not recommended for production
 def login_by_email(request):
     if request.method == 'POST':
@@ -92,7 +92,7 @@ def login_by_email(request):
         return HttpResponseNotAllowed(['POST'])
 
 
-#Logging out
+#Logging out in the base.html
 def logout_user(request):
     logout(request)
     return render(request, 'account/logged_out.html', {})
@@ -100,6 +100,7 @@ def logout_user(request):
 
 VERIFICATION_EXPIRATION_MINUTES = 15
 
+# After filling the registration the user is moved here to fill the verification code for the email
 def waiting(request):
     if request.method == 'POST':
         code = request.POST.get('code')
@@ -145,6 +146,7 @@ def waiting(request):
     return redirect('homepage:homepage')
 
 
+# After the resend button the timer is restarted and the email is resend
 @csrf_exempt
 def start_verification(request):
     if request.method == 'POST':

@@ -50,6 +50,8 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER  # Default sender email address
 # Application definition
 
 INSTALLED_APPS = [
+    # Authentication app
+    'account.apps.AccountConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -58,7 +60,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Applications
-    'account.apps.AccountConfig',
     'main.apps.MainConfig',
     'project_info.apps.ProjectInfoConfig',
 
@@ -78,11 +79,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'realproject.urls'
 
+import os
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            BASE_DIR / 'templates'
+            os.path.join(BASE_DIR, 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
