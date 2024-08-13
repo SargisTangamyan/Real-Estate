@@ -5,19 +5,20 @@ from django.utils.timezone import now
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponseNotAllowed
 from django.views.decorators.csrf import csrf_exempt
-import random
-from django.utils.timezone import now
 from django.conf import settings
-from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import login, logout
 from django.views.decorators.csrf import csrf_exempt
+import random
 
 # From the main
 from main.models import CustomUser
 
 # from this app
 from .forms import RegistrationForm, EmailLoginForm
+
+# From tasks
+from .tasks import send_to_email
+
 
 def send_verification(request, user_data=None):
     if not user_data:
@@ -28,13 +29,8 @@ def send_verification(request, user_data=None):
     subject = 'Verify your email'
     from_email = settings.EMAIL_HOST_USER
     to_email = request.session['email']
-    text_content = f'Your verification code is {verification_code}'
-    html_content = render_to_string('account/verification_email.html', {
-        'verification_code': str(verification_code),
-    })
-    msg = EmailMultiAlternatives(subject, text_content, from_email, [to_email])
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+    send_to_email.delay(verification_code, subject, from_email, to_email)
+    
 
 
 @csrf_exempt
@@ -125,7 +121,7 @@ def waiting(request):
                     del request.session['verification_code']
                     del request.session['verification_time']
                     login(request, user)
-                    return HttpResponseRedirect(reverse('account:verification_success'))
+                    return HttpResponseRedirect(reverse('verification_success'))
                 else:
                     return JsonResponse({'message': 'Invalid code. Only 1 try left.'}, status=400)
             else:
