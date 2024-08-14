@@ -96,6 +96,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 # Additional
                 'main.context_processors.registration_info',
+                'project_info.context_processors.contact_us_info',
             ],
         },
     },

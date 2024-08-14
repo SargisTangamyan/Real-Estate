@@ -26,10 +26,8 @@ def send_verification(request, user_data=None):
     verification_code = random.randint(100000, 999999)
     request.session['verification_code'] = verification_code
     request.session.set_expiry(30 * 60)
-    subject = 'Verify your email'
-    from_email = settings.EMAIL_HOST_USER
     to_email = request.session['email']
-    send_to_email.delay(verification_code, subject, from_email, to_email)
+    send_to_email.delay(verification_code, to_email)
     
 
 

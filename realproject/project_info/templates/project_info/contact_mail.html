@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Contact Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .info {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>New Contact Request</h2>
+    <p>You have received a new message from a user. Here are the details:</p>
+
+    <div class="info">
+        {% if username %}
+        <p><strong>Username:</strong> {{username}}</p>
+        <p><strong>Service:</strong> {{service}}</p>
+        {% endif %}
+        <p><strong>Name:</strong> {{name}}</p>
+        <p><strong>Email:</strong> {{email}}</p>
+        {% if phone %}
+        <p><strong>Phone:</strong> {{phone}}</p>
+        {% endif %}
+        <p><strong>Message:</strong></p>
+        <p>{{message}}</p>
+    </div>
+
+    <p>Please review and respond accordingly.</p>
+
+    <p>Best regards,<br>Your Website Team</p>
+</div>
+
+</body>
+</html>

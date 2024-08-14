@@ -277,7 +277,7 @@
 		                </ul>
 		            </li>
 		            <li class="last">
-		                <a href="page-contact.html"><span class="title">Contact</span></a>
+		                <a href="{% url 'project_info:contact' %}"><span class="title">Contact</span></a>
 		            </li>
 	                {% if user.is_authenticated %}
 						<li class="nav-item dropdown user-menu">
@@ -590,7 +590,7 @@
 		                <li><a href="page-ui-element.html">UI Elements</a></li>
 					</ul>
 				</li>
-				<li><a href="page-contact.html">Contact</a></li>
+				<li><a href="{% url 'project_info:contact' %}">Contact</a></li>
 				<li><a href="page-login.html"><span class="flaticon-user"></span> Login</a></li>
 				<li><a href="page-register.html"><span class="flaticon-edit"></span> Register</a></li>
 				<li class="cl_btn"><a class="btn btn-block btn-lg btn-thm circle" href="#"><span class="flaticon-plus"></span> Create Listing</a></li>
@@ -610,7 +610,7 @@
             <div class="col-sm-6 col-md-6 col-lg-3 col-xl-3 pr0 pl0">
                 <div class="footer_about_widget">
                     <h4>About Site</h4>
-                    <p>We’re reimagining how you buy, sell and rent. It’s now easier to get into a place you love. So let’s do this, together.</p>
+                    <p>At Synergy Terrace Realty, we’re redefining real estate to make buying, selling, and renting easier than ever. Our mission is to help you find a home you love with seamless, personalized service. Let's make your real estate journey exceptional together.</p>
                 </div>
             </div>
             <div class="col-sm-6 col-md-6 col-lg-3 col-xl-3">
@@ -629,11 +629,13 @@
                 <div class="footer_contact_widget">
                     <h4>Contact Us</h4>
                     <ul class="list-unstyled">
-                        <li><a href="#">info@findhouse.com</a></li>
-                        <li><a href="#">Collins Street West, Victoria</a></li>
-                        <li><a href="#">8007, Australia.</a></li>
-                        <li><a href="#">+1 246-345-0699</a></li>
-                        <li><a href="#">+1 246-345-0695</a></li>
+                        <li><a href="mailto:{{contact_info.mail}}">{{contact_info.mail}}</a></li>
+                        <li><a href="https://www.google.com/maps/place/Republic+Square/@40.1776916,44.5100657,17z/data=!3m1!4b1!4m6!3m5!1s0x406abcfa28499691:0x2bde14d127166c74!8m2!3d40.1776875!4d44.5126406!16s%2Fm%2F02r2t03?entry=ttu" target="_blank">{{contact_info.address}}</a></li>
+                        <li><a href="javascript:void(0);">{{contact_info.country}}</a></li>
+                        <li><a href="tel:{{contact_info.phone1}}">{{phone1}}</a></li>
+						{% if phone2 %}
+                        <li><a href="tel:{{contact_info.phone2}}">{{phone2}}</a></li>
+						{% endif %}
                     </ul>
                 </div>
             </div>
@@ -641,12 +643,11 @@
                 <div class="footer_social_widget">
                     <h4>Follow us</h4>
                     <ul class="mb30">
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-instagram"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-pinterest"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-dribbble"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-google"></i></a></li>
+                        <li class="list-inline-item"><a href="{{contact_info.facebook}}"><i class="fa fa-facebook"></i></a></li>
+                        <li class="list-inline-item"><a href="{{contact_info.twitter}}"><i class="fa fa-twitter"></i></a></li>
+                        <li class="list-inline-item"><a href="{{contact_info.instagram}}"><i class="fa fa-instagram"></i></a></li>
+                        <li class="list-inline-item"><a href="{{contact_info.pinterest}}"><i class="fa fa-pinterest"></i></a></li>
+                        <li class="list-inline-item"><a href="mailto:{{contact_info.mail}}"><i class="fa fa-google"></i></a></li>
                     </ul>
                     <h4>Subscribe</h4>
                     <form class="footer_mailchimp_form">
@@ -672,18 +673,18 @@
             <div class="col-lg-6 col-xl-6">
                 <div class="footer_menu_widget">
                     <ul>
-                        <li class="list-inline-item"><a href="#">Home</a></li>
+                        <li class="list-inline-item"><a href="{% url 'homepage:homepage' %}">Home</a></li>
                         <li class="list-inline-item"><a href="#">Listing</a></li>
                         <li class="list-inline-item"><a href="#">Property</a></li>
                         <li class="list-inline-item"><a href="#">Pages</a></li>
                         <li class="list-inline-item"><a href="#">Blog</a></li>
-                        <li class="list-inline-item"><a href="#">Contact</a></li>
+                        <li class="list-inline-item"><a href="{% url 'project_info:contact' %}">Contact</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-lg-6 col-xl-6">
                 <div class="copyright-widget text-right">
-                    <p>© 2020 Find House. Made with love.</p>
+                    <p>© 2024 Synergy Terrace Realty</p>
                 </div>
             </div>
         </div>
@@ -696,7 +697,7 @@
 {% block additional_js %}
 
 {% endblock additional_js %}
-
+<script type="text/javascript" src="{% static 'js/script.js' %}"></script>
 <!-- My own JS scripts -->
 
 <!-- Select options -->
@@ -873,7 +874,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 
 	function LoginUser(formData, csrfToken) {
-		fetch('account/login/', {
+		fetch('/account/login/', {
 			method: 'POST', // Ensure the request method is POST
 			body: formData,
 			headers: {
@@ -901,7 +902,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	</script>
-	
 
 </body>
 </html>

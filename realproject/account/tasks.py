@@ -6,7 +6,9 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
 @shared_task
-def send_to_email(verification_code, subject, from_email, to_email):
+def send_to_email(verification_code, to_email):
+    subject = 'Verify your email'
+    from_email = settings.EMAIL_HOST_USER
     text_content = f'Your verification code is {verification_code}'
     html_content = render_to_string('account/verification_email.html', {
         'verification_code': str(verification_code),
