@@ -5,6 +5,8 @@ from . import views
 
 urlpatterns = [
     path('waiting/', views.waiting, name='waiting'),
+    path('current-time/', views.current_time, name='current_time'),
+    path('clear-session/', views.clear_session, name='clear_session'),
     path('verification-success/', views.verification_success, name='verification_success'),
     path('verification-failed/', views.verification_failed, name='verification_failed'),
     path('start_verification/', views.start_verification, name='start_verification'),

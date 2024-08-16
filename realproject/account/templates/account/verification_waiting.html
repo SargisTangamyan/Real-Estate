@@ -49,14 +49,5 @@
         <button id="resend">Resend Code</button>
     </div>
     <script src="{% static 'js/verification_script.js'%}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') {
-                    location.reload();
-                }
-            });
-        });
-    </script>
 </body>
 </html>

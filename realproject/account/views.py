@@ -53,7 +53,7 @@ def register(request):
             request.session['user_data'] = user_data
             request.session['email'] = email
             request.session['verification_time'] = now().isoformat()
-            request.session.set_expiry(30 * 60)  # 30 minutes in seconds
+            request.session.set_expiry(86400)  # 1 day in seconds
             send_verification(request, user_data)
             return JsonResponse({'success': True})  # Redirect to a page of your choice
         else:
@@ -140,6 +140,18 @@ def waiting(request):
     return redirect('homepage:homepage')
 
 
+# Giving the current time in js
+def current_time(request):
+    verification_start_time = request.session.get('verification_time')
+    if verification_start_time:
+        verification_start_time = datetime.datetime.fromisoformat(verification_start_time)
+        expiration_time = verification_start_time + datetime.timedelta(minutes=VERIFICATION_EXPIRATION_MINUTES)
+        remaining_time = max(0, (expiration_time - now()).total_seconds())
+    else:
+        remaining_time = VERIFICATION_EXPIRATION_MINUTES * 60  # Default timer duration if not set
+    return JsonResponse({'remaining_time': remaining_time})
+    
+
 # After the resend button the timer is restarted and the email is resend
 @csrf_exempt
 def start_verification(request):
@@ -168,3 +180,13 @@ def verification_failed(request):
         del request.session['verification_time']
         print('-------cleaned.')
     return render(request, 'account/verification_failed.html', {'message': message, 'resendUsed': resendUsed})
+
+
+def clear_session(request):
+    if request.session.get('user_data'):
+        del request.session['user_data']
+        del request.session['email']
+        del request.session['verification_code']
+        del request.session['verification_time']
+        print('----------cleared the sessions from the clear_session')
+    return redirect('homepage:homepage')

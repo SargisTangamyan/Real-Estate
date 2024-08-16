@@ -88,7 +88,7 @@
         {% if message %}
             <p style="color: red;">{{ message }}</p>
         {% endif %}
-        <button><a href="{% url 'homepage:homepage' %}">Home</a></button>
+        <button id="clearStorageButton"><a href="{% url 'clear_session' %}">Home</a></button>
         <button id="resendButton" class="resend-button"><a href="#" id="resendLink">Resend Verification</a></button>
     </div>
 
@@ -96,6 +96,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const resendButton = document.getElementById('resendButton');
             const resendLink = document.getElementById('resendLink');
+            const clearStorageButton = document.getElementById('clearStorageButton');
             
             // Retrieve the value of 'resendUsed' from localStorage
             const resendUsed = "{{ resendUsed|escapejs }}";
@@ -141,6 +142,11 @@
                     // If resendUsed is already true, show an appropriate message or take action
                     alert('You have already requested to resend.');
                 }
+            });
+            // Handle clear storage button click
+            clearStorageButton.addEventListener('click', function(event) {
+                localStorage.clear();
+                // No need to handle redirection here, as it's done by the link in the button
             });
         });
         
