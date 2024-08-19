@@ -1,0 +1,81 @@
+{% extends "extend/base.html" %}
+{% load static %}
+{% block title %}Login{% endblock title %}
+{% block content %}
+	<!-- Inner Page Breadcrumb -->
+	<section class="inner_page_breadcrumb">
+		<div class="container">
+			<div class="row">
+				<div class="col-xl-6">
+					<div class="breadcrumb_content">
+						<h4 class="breadcrumb_title">Logın</h4>
+						<ol class="breadcrumb">
+						    <li class="breadcrumb-item"><a href="{% url 'homepage:homepage' %}">Home</a></li>
+						    <li class="breadcrumb-item active" aria-current="page">Logın</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Our LogIn Register -->
+	<section class="our-log bgc-fa">
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-12 col-lg-6 offset-lg-3">
+					<div class="login_form inner_page">
+						<form method="post" action="{% url 'login_page' %}">{% csrf_token %}
+							<div class="heading">
+								<h3 class="text-center">Login to your account</h3>
+								<p class="text-center">Don't have an account? <a class="text-thm" href="{% url 'register' %}">Sign Up!</a></p>
+							</div>
+							<div class="ui_kit_message_box">
+								{% if error %}
+								<div id='login-warning' class="alert alart_style_four alert-dismissible fade show" role="alert">
+									Invalid Login or Password
+								</div>
+								{% endif %}
+							</div>	
+							 <div class="form-group">
+						    	<input name="username" type="email" class="form-control" id="exampleInputEmail3" placeholder="Email Address" {% if form.username.value %}value="{{form.username.value}}"{% endif %}>
+							</div>
+							<div class="form-group">
+						    	<input name="password" type="password" class="form-control" id="exampleInputPassword4" placeholder="Password">
+							</div>
+							<div class="form-group custom-control custom-checkbox">
+								<input name='remember_me' type="checkbox" class="custom-control-input" id="exampleCheck3">
+								<label class="custom-control-label" for="exampleCheck3">Remember me</label>
+								<a class="tdu btn-fpswd float-right" href="{% url 'password_reset' %}">Forgot Password?</a>
+							</div>
+							<input type="hidden" name="next" value="{{ next }}">
+							<button type="submit" class="btn btn-log btn-block btn-thm2">Login</button>
+							<div class="divide">
+								<span class="lf_divider">Or</span>
+								<hr>
+							</div>
+							<div class="row mt40">
+								<div class="col-lg">
+									<button type="submit" class="btn btn-block color-white bgc-fb mb0"><i class="fa fa-facebook float-left mt5"></i> Facebook</button>
+								</div>
+								<div class="col-lg">
+									<button type="submit" class="btn btn2 btn-block color-white bgc-gogle mb0"><i class="fa fa-google float-left mt5"></i> Google</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Start Partners -->
+	{% include "include/join_us.html" %}
+{% endblock content %}
+{% block additional_js %}
+	<script type="text/javascript" src="{% static 'js/progressbar.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/slider.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/timepicker.js' %}"></script>
+	<script type="text/javascript" src="{% static 'js/wow.min.js' %}"></script>
+{% endblock additional_js %}
+	

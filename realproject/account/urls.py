@@ -1,9 +1,15 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from django.views.generic import TemplateView
 
 
 urlpatterns = [
+    path('login/', views.login_by_email, name='login'),
+    path('register/', views.register, name='register'),
+    path('logout/', views.logout_user, name='logout'),
+    path('login-page/', views.login_page, name='login_page'),
+    path('register-page/', views.register_page, name='register_page'),
     path('waiting/', views.waiting, name='waiting'),
     path('current-time/', views.current_time, name='current_time'),
     path('clear-session/', views.clear_session, name='clear_session'),
@@ -11,9 +17,7 @@ urlpatterns = [
     path('verification-failed/', views.verification_failed, name='verification_failed'),
     path('start_verification/', views.start_verification, name='start_verification'),
     path('validate_registration/', views.validate_registration, name='validate_registration'),
-    path('login/', views.login_by_email, name='login'),
-    path('register/', views.register, name='register'),
-    path('logout/', views.logout_user, name='logout'),
+    
      # Password reset views
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),

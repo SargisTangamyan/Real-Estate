@@ -1,0 +1,224 @@
+{% extends "extend/base.html" %}
+{% load static %}
+{% block title %}Register{% endblock title %}
+{% block content %}
+
+    <!-- Inner Page Breadcrumb -->
+    <section class="inner_page_breadcrumb">
+        <div class="container">
+            <div class="row">
+                <div class="col-xl-6">
+                    <div class="breadcrumb_content">
+                        <h4 class="breadcrumb_title">Register</h4>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{% url 'homepage:homepage' %}">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Register</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our LogIn Register -->
+    <section class="our-log-reg bgc-fa">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 col-lg-6 offset-lg-3">
+                    <div class="sign_up_form inner_page">
+                        <div class="heading">
+                            <h3 class="text-center">Register to start learning</h3>
+                            <p class="text-center">Have an account? <a class="text-thm" href="{% url 'login_page' %}">Login</a></p>
+                        </div>
+                        <div class="details">
+                            <form method="post" action="{% url 'register_page' %}">{% csrf_token %}
+                                {% if form.non_field_errors %}
+                                <div class="ui_kit_message_box">
+                                    <div class="alert alart_style_four alert-dismissible fade show" role="alert">
+                                        <ul>
+                                            {% for error in form.non_field_errors %}
+                                                <li>{{error}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                 <div class="form-group">
+                                    <input name="email" {% if form.email.value %}value="{{form.email.value}}"{% endif %} type="email" class="form-control" id="exampleInputEmail3" placeholder="Email Address">
+                                </div>
+                                {% if form.email.errors %}
+                                    <div id="email-error" class="error">
+                                        <ul>
+                                            {% for error in form.email.errors %}
+                                                <li>{{error}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                <div class="form-group">
+                                    <input name="password" type="password" class="form-control" id="exampleInputPassword4" placeholder="Password">
+                                </div>
+                                {% if form.password.errors %}
+                                    <div id="password-error" class="error">
+                                        <ul>
+                                            {% for error in form.password.errors %}
+                                                <li>{{error}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                <div class="form-group">
+                                    <input name="password2" type="password" class="form-control" id="exampleInputPassword5" placeholder="Confirm Password">
+                                </div>
+                                {% if form.password2.errors %}
+                                    <div id="password2-error" class="error">
+                                        <ul>
+                                            {% for error in form.password2.errors %}
+                                                <li>{{error}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                <div id="serviceDiv1" class="form-group ui_kit_select_search mb0">
+                                    <select id='service1' name="service" class="selectpicker" data-live-search="true" onchange="toggleSelect1()" data-width="100%">
+                                        {% for value, label in services %}
+                                            <option value="{{ value }}" {% if value == form.service.value %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% if form.service.errors %}
+                                    <div id="service-error" class="error">
+                                        <ul>
+                                            {% for error in form.service.errors %}
+                                                <li>{{error}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+
+                                <div id="service_providerDiv1" class="form-group ui_kit_select_search mb0">
+                                    <select id="service_provider1" name="service_provider" class="selectpicker" data-live-search="true" data-width="100%">
+                                        {% for value, label in service_providers %}
+                                            <option value="{{ value }}" {% if value == form.service_provider.value %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% if form.service_provider.errors %}
+                                    <div id="service_provider-error" class="error">
+                                        <ul>
+                                            {% for error in form.service_provider.errors %}
+                                                <li>{{error}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                                <div class="form-group custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="exampleCheck21" onclick="toggleSubmitButton1()" {% if form %}checked{% endif %}>
+                                    <label class="custom-control-label" for="exampleCheck21">I have read and accept the <a class="terms-and-conditions-link" href="{% url 'project_info:terms_conditions' %}">Terms and Privacy Policy?</a></label>
+                                </div>
+                                <button type="submit" id='submit-register1' class="btn btn-log btn-block btn-thm2" disabled>Register</button>
+                            </form>
+                            <div class="divide">
+                                <span class="lf_divider">Or</span>
+                                <hr>
+                            </div>
+                            <div class="row mt40">
+                                <div class="col-lg">
+                                    <button type="submit" class="btn btn-block color-white bgc-fb mb0"><i class="fa fa-facebook float-left mt5"></i> Facebook</button>
+                                </div>
+                                <div class="col-lg">
+                                    <button type="submit" class="btn btn2 btn-block color-white bgc-gogle mb0"><i class="fa fa-google float-left mt5"></i> Google</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock content %}
+{% block additional_js %}
+    <script type="text/javascript" src="{% static 'js/progressbar.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/slider.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/timepicker.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/wow.min.js' %}"></script>
+    <!-- Select options -->
+    <script>
+        function toggleSelect1() {
+            var firstSelect = document.getElementById('service1');
+            var secondSelect = document.getElementById('service_provider1');
+            var secondSelectContainer = document.getElementById('service_providerDiv1');
+            
+            if (firstSelect.value === '' || firstSelect.value === 'US') {
+                secondSelectContainer.style.display = 'none';
+                secondSelect.value = ''; // Reset the value of the second select
+                $('.selectpicker').selectpicker('refresh'); // Refresh selectpicker to reflect changes
+            } else {
+                secondSelectContainer.style.display = 'block';
+                $('.selectpicker').selectpicker('refresh'); // Refresh selectpicker to reflect changes
+            }
+        }
+        
+        // Call toggleSelect on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleSelect1();
+        });
+        // Also call toggleSelect when the first select value changes
+        document.getElementById('service1').addEventListener('change', toggleSelect1);
+    </script>
+
+    <!-- Error handling -->
+    <script>
+        function clearError(fieldId, errorId) {
+            var field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('change', function() {
+                    var errorDiv = document.getElementById(errorId);
+                    if (errorDiv) {
+                        errorDiv.style.display = 'none';
+                    }
+                });
+            }
+        }
+
+        // Clear errors on input/select change
+        document.addEventListener('DOMContentLoaded', function() {
+            clearError('exampleInputEmail3', 'email-error');
+            clearError('exampleInputPassword4', 'password-error');
+            clearError('exampleInputPassword5', 'password2-error');
+            clearError('service1', 'service-error');
+            clearError('service_provider1', 'service_provider-error');
+        });
+    </script>
+
+    <!-- Button activation -->
+    <script>
+        function toggleSubmitButton1() {
+            var checkbox = document.getElementById('exampleCheck21');
+            var submitButton = document.getElementById('submit-register1');
+            submitButton.disabled = !checkbox.checked;
+        
+            if (checkbox.checked) {
+                submitButton.classList.remove('disable-hover');
+            } else {
+                submitButton.classList.add('disable-hover');
+            }
+        }
+        
+        // Initialize the button state based on the checkbox state on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            var submitButton = document.getElementById('submit-register1');
+            var checkbox = document.getElementById('exampleCheck21');
+        
+            // Set initial state of the submit button
+            submitButton.disabled = !checkbox.checked;
+        
+            if (checkbox.checked) {
+                submitButton.classList.remove('disable-hover');
+            } else {
+                submitButton.classList.add('disable-hover');
+            }
+        });        
+    </script>
+{% endblock additional_js %}

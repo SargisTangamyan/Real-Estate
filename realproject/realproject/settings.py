@@ -175,3 +175,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Registering the created CustomUser
 AUTH_USER_MODEL = 'main.CustomUser'
 
+
+# Authentication settings
+LOGIN_URL = 'login_page'
+

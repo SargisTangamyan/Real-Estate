@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, HttpResponseRedirect, HttpRespons
 import datetime
 from django.utils.timezone import now
 from django.urls import reverse
-from django.http import JsonResponse, HttpResponseNotAllowed
+from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from django.contrib.auth import login, logout
@@ -29,7 +29,6 @@ def send_verification(request, user_data=None):
     to_email = request.session['email']
     send_to_email.delay(verification_code, to_email)
     
-
 
 @csrf_exempt
 def validate_registration(request):
@@ -58,10 +57,10 @@ def register(request):
             return JsonResponse({'success': True})  # Redirect to a page of your choice
         else:
             # Form is invalid, re-render the form with errors
-            return render(request, 'registration.html', {'form': form})
+            errors = form.errors.as_json()
+            return JsonResponse({'success': False, 'errors': errors})
     else:
         form = RegistrationForm()
-        print(form.errors)
         return HttpResponse("Something went wrong!")
 
 
@@ -73,11 +72,11 @@ def login_by_email(request):
         if form.is_valid():
             user = form.get_user()
             remember_me = request.POST.get('remember_me', False)
+            login(request, user)
             if remember_me:
                 request.session.set_expiry(1209600)  # 2 weeks
             else:
                 request.session.set_expiry(0)
-            login(request, user)
             return JsonResponse({'success': True})
         else:
             errors = form.errors.as_json()
@@ -163,10 +162,8 @@ def start_verification(request):
     return JsonResponse({'status': 'failed'}, status=400)
 
 
-
 def verification_success(request):
     return render(request, 'account/verification_success.html', {})
-
 
 
 def verification_failed(request):
@@ -190,3 +187,55 @@ def clear_session(request):
         del request.session['verification_time']
         print('----------cleared the sessions from the clear_session')
     return redirect('homepage:homepage')
+
+
+# Login from a separate page
+def login_page(request):
+    if request.user.is_authenticated:
+        return redirect('homepage:homepage')
+    if request.method == 'POST':
+        form = EmailLoginForm(request, data=request.POST)
+        # Get the 'next' parameter from the URL
+        next_url = request.POST.get('next', request.GET.get('next', None))
+
+        if form.is_valid():
+            user = form.get_user()
+            remember_me = request.POST.get('remember_me', False)
+            login(request, user)
+
+            if remember_me:
+                request.session.set_expiry(1209600)  # 2 weeks
+            else:
+                request.session.set_expiry(0) # The user will be logged out when the browser is closed
+                
+            return HttpResponseRedirect(next_url) if next_url else redirect('homepage:homepage')
+        else:
+            print(form.errors)
+            return render(request, 'account/page-login.html', {'error': True, 'form':form, 'next': next_url})
+    else:
+        form = EmailLoginForm()
+    return render(request, 'account/page-login.html', {'next': request.GET.get('next', '')})
+
+
+# Regiser from a seperate page
+def register_page(request):
+    if request.user.is_authenticated:
+        return redirect('homepage:homepage')
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user_data = form.cleaned_data
+            email = user_data['email']
+            request.session['user_data'] = user_data
+            request.session['email'] = email
+            request.session['verification_time'] = now().isoformat()
+            request.session.set_expiry(86400)  # 1 day in seconds
+            send_verification(request, user_data)
+            return redirect('waiting')
+        else:
+            # Form is invalid, re-render the form with errors
+            print(form.errors)
+            return render(request, 'account/page-register.html', {'form': form})
+    
+    form = RegistrationForm()
+    return render(request, 'account/page-register.html', {})

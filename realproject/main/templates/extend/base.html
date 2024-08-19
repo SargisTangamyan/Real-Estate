@@ -258,10 +258,10 @@
 		                    <li><a href="page-about.html">About Us</a></li>
 		                    <li><a href="page-gallery.html">Gallery</a></li>
 		                    <li><a href="page-faq.html">Faq</a></li>
-		                    <li><a href="page-login.html">LogIn</a></li>
+		                    <li><a href="{% url 'login_page' %}">LogIn</a></li>
 			                <li><a href="page-compare.html">Membership</a></li>
 			                <li><a href="page-compare2.html">Membership 2</a></li>
-		                    <li><a href="page-register.html">Register</a></li>
+		                    <li><a href="{% url 'register_page' %}">Register</a></li>
 		                    <li><a href="page-service.html">Service</a></li>
 		                    <li><a href="page-error.html">404 Page</a></li>
 		                    <li><a href="page-terms.html">Terms and Conditions</a></li>
@@ -476,7 +476,7 @@
 				<div class="d-flex justify-content-between">
 					<a class="mobile-menu-trigger mobile-menu-link" href="#menu">Menu</a>
 					<a class="nav_logo_img" href="{% url 'homepage:homepage' %}"><img class="img-fluid mt20" src="{% static 'images/header-logo2.png' %}" alt="header-logo2.png"></a>
-					<a class="mobile-menu-reg-link" href="page-register.html"><span class="flaticon-user"></span></a>
+					<a class="mobile-menu-reg-link" href="{% url 'login' %}"><span class="flaticon-user"></span></a>
 				</div>
 			</div>
 		</div><!-- /.mobile-menu -->
@@ -580,10 +580,10 @@
 		                <li><a href="page-about.html">About Us</a></li>
 		                <li><a href="page-gallery.html">Gallery</a></li>
 		                <li><a href="page-faq.html">Faq</a></li>
-		                <li><a href="page-login.html">LogIn</a></li>
+		                <li><a href="{% url 'login_page' %}">LogIn</a></li>
 		                <li><a href="page-compare.html">Membership</a></li>
 		                <li><a href="page-compare2.html">Membership 2</a></li>
-	                    <li><a href="page-register.html">Register</a></li>
+	                    <li><a href="{% url 'register_page' %}">Register</a></li>
 	                    <li><a href="page-service.html">Service</a></li>
 		                <li><a href="page-error.html">404 Page</a></li>
 		                <li><a href="{% url 'project_info:terms_conditions' %}">Terms and Conditions</a></li>
@@ -591,8 +591,8 @@
 					</ul>
 				</li>
 				<li><a href="{% url 'project_info:contact' %}">Contact</a></li>
-				<li><a href="page-login.html"><span class="flaticon-user"></span> Login</a></li>
-				<li><a href="page-register.html"><span class="flaticon-edit"></span> Register</a></li>
+				<li><a href="{% url 'login_page' %}"><span class="flaticon-user"></span> Login</a></li>
+				<li><a href="{% url 'register_page' %}"><span class="flaticon-edit"></span> Register</a></li>
 				<li class="cl_btn"><a class="btn btn-block btn-lg btn-thm circle" href="#"><span class="flaticon-plus"></span> Create Listing</a></li>
 			</ul>
 		</nav>
@@ -790,7 +790,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(this);
         const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        fetch('account/validate_registration/', {
+        fetch('/account/validate_registration/', {
             method: 'POST',
             body: formData,
             headers: {
@@ -820,6 +820,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             if (fieldDiv) fieldDiv.classList.add('invalid-field');
                         }
                     });
+					// Clear input values for password fields
+					const inputField1 = document.getElementById(`exampleInputPassword2`);
+					const inputField2 = document.getElementById(`exampleInputPassword3`);
+					if (inputField1) {
+						inputField1.value = ''; // Clear the input value
+					}
+					if (inputField2) {
+						inputField2.value = ''; // Clear the input value
+					};
                 }
             }
         })

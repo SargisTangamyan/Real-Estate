@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 
 # From itself
 from .models import TermsAndConditions, ContactUs
@@ -15,6 +16,7 @@ from main.models import CustomUser
 def terms_and_conditions(request):
     terms_conditions = get_object_or_404(TermsAndConditions, id=1)
     return render(request, 'project_info/terms-conditions.html', {'terms_conditions': terms_conditions})
+
 
 def contact_us(request):
     # Fetch the mail address from the ContactUs model
