@@ -85,6 +85,12 @@
 	.mobile-menu-link:active {
 		color: #d32f2f; /* Even darker red when clicked */
 	}
+	.user-photo {
+		width: 55px; /* or any desired width */
+		height: 55px; /* or any desired height */
+		object-fit: cover; /* Ensures the image covers the area without distortion */
+		border: 2px solid #fff; /* Optional: Adds a border for better visibility */
+	}
 	
 </style>
 </head>
@@ -112,6 +118,7 @@
 		        </a>
 		        <!-- Responsive Menu Structure-->
 		        <!--Note: declare the Menu style in the data-menu-style="horizontal" (options: horizontal, vertical, accordion) -->
+				{% if not hide_footer %}
 				<div class="ht_left_widget float-left">
 					<ul>
 						<li class="list-inline-item dn-1440">
@@ -133,6 +140,7 @@
 		                </li>
 					</ul>
 				</div>
+				{% endif %}
 		        <ul id="respMenu" class="ace-responsive-menu text-right" data-menu-style="horizontal">
 		            <li>
 		                <a href="#"><span class="title">Home</span></a>
@@ -280,17 +288,23 @@
 		                <a href="{% url 'project_info:contact' %}"><span class="title">Contact</span></a>
 		            </li>
 	                {% if user.is_authenticated %}
-						<li class="nav-item dropdown user-menu">
-							<a href="#">
-								<span class="username">My account</span>
-							</a>
-							<ul class="dropdown-menu dropdown-menu-right">
-								<li><a class="dropdown-item" href="#account">Account</a></li>
-								<li><a class="dropdown-item" href="#settings">Settings</a></li>
-								<li><a class="dropdown-item" href="#messages">Messages</a></li>
-								<li><a class="dropdown-item" href="#listings">Listings</a></li>
-								<li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-							</ul>
+						<li class="user_setting">
+							<div class="dropdown">
+								<a class="btn dropdown-toggle" href="#" data-toggle="dropdown"><img class="rounded-circle user-photo"  src="{% static 'images/own/no_profile.jpg' %}" alt="me"> <span class="dn-1199">Name Surname</span></a>
+								<div class="dropdown-menu">
+									<div class="user_set_header">
+										<img class="float-left rounded-circle user-photo" src="{% static 'images/own/no_profile.jpg' %}" alt="me">
+										<p>Ali Tufan <br><span class="address">namesurname@gmail.com</span></p>
+									</div>
+									<div class="user_setting_content">
+										<a class="dropdown-item active" href="{% url 'user_profile:my_profile' %}">My Profile</a>
+										<a class="dropdown-item" href="#">Messages</a>
+										<a class="dropdown-item" href="#">Purchase history</a>
+										<a class="dropdown-item" href="#">Help</a>
+										<a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+									</div>
+								</div>
+							</div>
 						</li>
 					{% else %}
 						<li class="list-inline-item list_s"><a href="#" class="btn flaticon-user" data-toggle="modal" data-target=".bd-example-modal-lg"> <span class="dn-lg">Login/Register</span></a></li>
@@ -603,6 +617,7 @@
     
     {% endblock content %}
 
+{% if not hide_footer %}
 <!-- Our Footer -->
 <section class="footer_one">
     <div class="container">
@@ -692,6 +707,7 @@
 </section>
 <a class="scrollToHome" href="#"><i class="flaticon-arrows"></i></a>
 </div>
+{% endif %}
 {% include "include/main_js.html" %}
 
 {% block additional_js %}
@@ -746,114 +762,115 @@
 });
 </script>
 
+<!-- Registration -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const errorFields = ['email', 'password', 'password2', 'service', 'service_provider'];
+	document.addEventListener('DOMContentLoaded', function() {
+		const errorFields = ['email', 'password', 'password2', 'service', 'service_provider'];
 
-    // Function to clear error messages when the input or select field is modified
-    function clearError(event) {
-        const field = event.target.name;
-        const errorElement = document.getElementById(`${field}Error`);
-        const fieldDiv = document.getElementById(`${field}Div`);
-        if (errorElement) errorElement.innerText = '';
-        if (fieldDiv) fieldDiv.classList.remove('invalid-field');
-    }
+		// Function to clear error messages when the input or select field is modified
+		function clearError(event) {
+			const field = event.target.name;
+			const errorElement = document.getElementById(`${field}Error`);
+			const fieldDiv = document.getElementById(`${field}Div`);
+			if (errorElement) errorElement.innerText = '';
+			if (fieldDiv) fieldDiv.classList.remove('invalid-field');
+		}
 
-    // Attach event listeners to clear error messages on input for inputs and on change for selects
-    errorFields.forEach(function(field) {
-        const inputElement = document.querySelector(`[name=${field}]`);
-        if (inputElement) {
-            if (inputElement.tagName === 'SELECT') {
-                inputElement.addEventListener('change', clearError);
-            } else {
-                inputElement.addEventListener('input', clearError);
-            }
-        }
-    });
+		// Attach event listeners to clear error messages on input for inputs and on change for selects
+		errorFields.forEach(function(field) {
+			const inputElement = document.querySelector(`[name=${field}]`);
+			if (inputElement) {
+				if (inputElement.tagName === 'SELECT') {
+					inputElement.addEventListener('change', clearError);
+				} else {
+					inputElement.addEventListener('input', clearError);
+				}
+			}
+		});
 
-    document.getElementById('registrationForm').addEventListener('submit', function(event) {
-        event.preventDefault();
+		document.getElementById('registrationForm').addEventListener('submit', function(event) {
+			event.preventDefault();
 
-        // Clear previous error messages
-        errorFields.forEach(function(field) {
-            const errorElement = document.getElementById(`${field}Error`);
-            const fieldDiv = document.getElementById(`${field}Div`);
-            if (errorElement) errorElement.innerText = '';
-            if (fieldDiv) fieldDiv.classList.remove('invalid-field');
-        });
+			// Clear previous error messages
+			errorFields.forEach(function(field) {
+				const errorElement = document.getElementById(`${field}Error`);
+				const fieldDiv = document.getElementById(`${field}Div`);
+				if (errorElement) errorElement.innerText = '';
+				if (fieldDiv) fieldDiv.classList.remove('invalid-field');
+			});
 
-        const nonFieldErrors = document.getElementById('nonFieldErrors');
-		const nonFieldErrorsList = document.getElementById('nonFieldErrorsList');
-		if (nonFieldErrors) nonFieldErrorsList.innerHTML = '';
-        nonFieldErrors.classList.add('d-none');
+			const nonFieldErrors = document.getElementById('nonFieldErrors');
+			const nonFieldErrorsList = document.getElementById('nonFieldErrorsList');
+			if (nonFieldErrors) nonFieldErrorsList.innerHTML = '';
+			nonFieldErrors.classList.add('d-none');
 
-        const formData = new FormData(this);
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+			const formData = new FormData(this);
+			const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        fetch('/account/validate_registration/', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': csrfToken
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Proceed to register user
-                registerUser(formData, csrfToken);
-            } else {
-                // Show validation errors under the appropriate fields
-                if (data.errors) {
-                    Object.keys(data.errors).forEach(function(field) {
-                        if (field === '__all__') {
-                            nonFieldErrors.classList.remove('d-none');
-                            data.errors[field].forEach(error => {
-                                const li = document.createElement('li');
-                                li.innerText = error;
-                                nonFieldErrorsList.appendChild(li);
-                            });
-                        } else {
-                            const errorElement = document.getElementById(`${field}Error`);
-                            const fieldDiv = document.getElementById(`${field}Div`);
-                            if (errorElement) errorElement.innerText = data.errors[field].join(', ');
-                            if (fieldDiv) fieldDiv.classList.add('invalid-field');
-                        }
-                    });
-					// Clear input values for password fields
-					const inputField1 = document.getElementById(`exampleInputPassword2`);
-					const inputField2 = document.getElementById(`exampleInputPassword3`);
-					if (inputField1) {
-						inputField1.value = ''; // Clear the input value
+			fetch('/account/validate_registration/', {
+				method: 'POST',
+				body: formData,
+				headers: {
+					'X-CSRFToken': csrfToken
+				}
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					// Proceed to register user
+					registerUser(formData, csrfToken);
+				} else {
+					// Show validation errors under the appropriate fields
+					if (data.errors) {
+						Object.keys(data.errors).forEach(function(field) {
+							if (field === '__all__') {
+								nonFieldErrors.classList.remove('d-none');
+								data.errors[field].forEach(error => {
+									const li = document.createElement('li');
+									li.innerText = error;
+									nonFieldErrorsList.appendChild(li);
+								});
+							} else {
+								const errorElement = document.getElementById(`${field}Error`);
+								const fieldDiv = document.getElementById(`${field}Div`);
+								if (errorElement) errorElement.innerText = data.errors[field].join(', ');
+								if (fieldDiv) fieldDiv.classList.add('invalid-field');
+							}
+						});
+						// Clear input values for password fields
+						const inputField1 = document.getElementById(`exampleInputPassword2`);
+						const inputField2 = document.getElementById(`exampleInputPassword3`);
+						if (inputField1) {
+							inputField1.value = ''; // Clear the input value
+						}
+						if (inputField2) {
+							inputField2.value = ''; // Clear the input value
+						};
 					}
-					if (inputField2) {
-						inputField2.value = ''; // Clear the input value
-					};
-                }
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    });
+				}
+			})
+			.catch(error => console.error('Error:', error));
+		});
 
-    function registerUser(formData, csrfToken) {
-        fetch('account/register/', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': csrfToken
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = '/account/waiting';
-            } else {
-                alert('Registration failed. Please try again.');
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-});
+		function registerUser(formData, csrfToken) {
+			fetch('account/register/', {
+				method: 'POST',
+				body: formData,
+				headers: {
+					'X-CSRFToken': csrfToken
+				}
+			})
+			.then(response => response.json())
+			.then(data => {
+				if (data.success) {
+					window.location.href = '/account/waiting';
+				} else {
+					alert('Registration failed. Please try again.');
+				}
+			})
+			.catch(error => console.error('Error:', error));
+		}
+	});
 </script>
 
 
