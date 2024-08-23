@@ -12,7 +12,6 @@
 <!-- Title -->
 <title>{% block title %}Real Estate{% endblock title %}</title>
 <!-- Favicon -->
- {% block additional_css %}{% endblock additional_css %}
 <link href="{% static 'images/favicon.ico'%}" sizes="128x128" rel="shortcut icon" type="image/x-icon" />
 <link href="{% static 'images/favicon.ico'%}" sizes="128x128" rel="shortcut icon" />
 
@@ -91,6 +90,8 @@
 		object-fit: cover; /* Ensures the image covers the area without distortion */
 		border: 2px solid #fff; /* Optional: Adds a border for better visibility */
 	}
+
+	{% block additional_css %}{% endblock additional_css %}
 	
 </style>
 </head>
@@ -290,11 +291,13 @@
 	                {% if user.is_authenticated %}
 						<li class="user_setting">
 							<div class="dropdown">
-								<a class="btn dropdown-toggle" href="#" data-toggle="dropdown"><img class="rounded-circle user-photo"  src="{% static 'images/own/no_profile.jpg' %}" alt="me"> <span class="dn-1199">Name Surname</span></a>
+								<a class="btn dropdown-toggle" href="#" data-toggle="dropdown"><img class="rounded-circle user-photo"  src="{% static 'images/own/no_profile.jpg' %}" alt="me"> <span class="dn-1199">{% if user.username %}{{user.username}}{% else %}Unkown{% endif %}</span></a>
 								<div class="dropdown-menu">
 									<div class="user_set_header">
 										<img class="float-left rounded-circle user-photo" src="{% static 'images/own/no_profile.jpg' %}" alt="me">
-										<p>Ali Tufan <br><span class="address">namesurname@gmail.com</span></p>
+									</div>
+									<div class="user_set_header">
+										<p>{% if user.username %}{{user.username}}{% else %}Unkown{% endif %} <br><span class="address">{{user.email}}</span></p>
 									</div>
 									<div class="user_setting_content">
 										<a class="dropdown-item active" href="{% url 'user_profile:my_profile' %}">My Profile</a>
@@ -448,9 +451,9 @@
 
 										<div id="service_providerDiv" class="form-group ui_kit_select_search mb0">
 											<select id="service_provider" name="service_provider" class="selectpicker" data-live-search="true" data-width="100%">
-												{% for value, label in service_providers %}
-													<option value="{{ value }}">{{ label }}</option>
-												{% endfor %}
+												<option value="">Select</option>
+												<option value="CY">Company</option>
+												<option value="PE">Private Entrepreneur</option>
 											</select>
 										</div>
 										<div id="service_providerError" class="error"></div>

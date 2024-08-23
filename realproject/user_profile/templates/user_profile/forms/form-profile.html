@@ -1,0 +1,19 @@
+{% for field in form %}
+    {% if field.name != 'photo' and field.name != 'user' and field.name != 'additional_documents' %}
+        {% if field.name == 'description' %}
+            <div class="col-xl-12">
+                <div class="my_profile_setting_textarea">
+        {% else %}
+            <div class="col-lg-6 col-xl-6">
+                <div class="my_profile_setting_input form-group">
+        {% endif %}
+            {{field.label_tag}}
+            {{field}}
+            <div class="error">{{field.errors}}</div>
+        </div>
+    </div>
+    
+    {% endif %}
+{% endfor %}
+
+

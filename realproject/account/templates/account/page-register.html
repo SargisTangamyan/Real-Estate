@@ -98,9 +98,9 @@
 
                                 <div id="service_providerDiv1" class="form-group ui_kit_select_search mb0">
                                     <select id="service_provider1" name="service_provider" class="selectpicker" data-live-search="true" data-width="100%">
-                                        {% for value, label in service_providers %}
-                                            <option value="{{ value }}" {% if value == form.service_provider.value %}selected{% endif %}>{{ label }}</option>
-                                        {% endfor %}
+                                        <option value="">Select</option>
+                                        <option value="CY">Company</option>
+                                        <option value="PE">Private Entrepreneur</option>
                                     </select>
                                 </div>
                                 {% if form.service_provider.errors %}

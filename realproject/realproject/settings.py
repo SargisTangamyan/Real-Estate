@@ -66,6 +66,7 @@ INSTALLED_APPS = [
 
     # Additional
     'phonenumber_field',
+    'django_countries',
 ]
 
 MIDDLEWARE = [

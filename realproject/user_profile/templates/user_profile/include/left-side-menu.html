@@ -1,7 +1,7 @@
 {% load static %}
 <div class="dashboard_sidebar_menu dn-992">
     <ul class="sidebar-menu">
-           <li class="header"><img src="{% static 'images/header-logo.png'%}" alt="Logo" style="margin: 0 25px 0 0;">ST Realty</li>
+           <a href="{% url 'homepage:homepage' %}"><li class="header"><img src="{% static 'images/header-logo.png'%}" alt="Logo" style="margin: 0 25px 0 0;">ST Realty</li></a>
            <li class="title"><span>Main</span></li>
         <li class="treeview"><a href="page-dashboard.html"><i class="flaticon-layers"></i><span> Dashboard</span></a></li>
           <li class="treeview"><a href="page-message.html"><i class="flaticon-envelope"></i><span> Message</span></a></li>

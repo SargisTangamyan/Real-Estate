@@ -1,8 +1,61 @@
 {% extends "extend/base.html" %}
 {% load static %}
 {% block title %}My Profile{% endblock title %}
-{% block content %}
+{% block additional_css %}
+.upload-box {
+	width: 100%;
+	padding: 20px;
+	border: 2px dashed #007bff;
+	border-radius: 10px;
+	text-align: center;
+	margin: 10px auto;
+	font-family: Arial, sans-serif;
+}
 
+/* Styling the file input */
+.upload-box input[type="file"] {
+	display: none;
+}
+
+/* Custom label for the file input */
+.upload-box label {
+	display: inline-block;
+	padding: 10px 20px;
+	color: white;
+	background-color: #007bff;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+/* Styling the file list */
+.file-list {
+	margin-top: 20px;
+	text-align: left;
+}
+
+.file-list li {
+	list-style: none;
+	padding: 5px;
+	border-bottom: 1px solid #ddd;
+}
+.upload-title {
+    font-size: 1rem;
+    font-weight: bold; /* Change to bold if needed */
+    color: #333;
+    margin: 0;
+    display: block;
+}
+.help-text {
+    font-size: 0.875em; /* Slightly smaller than the normal text */
+    color: #6c757d; /* Gray color for a subtle appearance */
+    margin-top: 5px; /* Space above the help text */
+    margin-bottom: 10px; /* Space below the help text */
+    line-height: 1.4; /* Comfortable line spacing */
+    font-style: italic; /* Optional: make the text italic for emphasis */
+}
+
+{% endblock additional_css %}
+{% block content %}
     {% include "user_profile/include/left-side-menu.html" %}
 
 	<!-- Our Dashbord -->
@@ -38,6 +91,7 @@
 							</div>
 						</div>
 						<div class="col-lg-12">
+							<form action="{% url 'user_profile:my_profile' %}" method="post" enctype="multipart/form-data" > {% csrf_token %}
 							<div class="my_dashboard_review">
 								<div class="row">
 									<div class="col-xl-2">
@@ -46,108 +100,52 @@
 									<div class="col-xl-10">
 										<div class="row">
 											<div class="col-lg-12">
-												<div class="wrap-custom-file">
-												    <input type="file" name="image1" id="image1" accept=".gif, .jpg, .png"/>
+												<div class="wrap-custom-file" {% if profile_data %}style="background-image: url('{{ profile_data.photo.url }}'); background-size: cover; background-position: center; background-repeat: no-repeat;"{% endif %}>
+												    <input type="file" name="photo" id="image1" accept=".gif, .jpg, .png"/>
 												    <label  for="image1">
 												      	<span><i class="flaticon-download"></i> Upload Photo </span>
 												    </label>
 												</div>
 												<p>*minimum 260px x 260px</p>
+												<div class="error">{{ form_without_rendering.photo.errors }}</div>
 											</div>
 											<div class="col-lg-6 col-xl-6">
 												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput1">Username</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput1" placeholder="alitfn">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleEmail">Email</label>
-											    	<input type="email" class="form-control" id="formGroupExampleEmail" placeholder="creativelayers@gmail.com">
+													<label for="username">Username</label>
+													<input type="text" class="form-control" name="username" id="username" readonly>
+													<div class="help-text">This field will be filled automatically</div>
 												</div>
 											</div>
 											<div class="col-lg-6 col-xl-6">
 												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput3">First Name</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput3">
+													<label for="email">email</label>
+													<input type="email" class="form-control" name="email" id="email" value="{{user.email}}" readonly>
 												</div>
 											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput4">Last Name</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput4">
+											{{form}}
+											<div class="col-lg-6 col-xl-6">	
+												<div class="upload-title">Additional Documents</div>
+												<div class="upload-box">
+													<label for="file-upload">Choose Files</label>
+													<input name="additional_documents" type="file" id="file-upload" multiple>
+													<div class="file-list">
+														<ul id="file-list-display"></ul>
+													</div>
 												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput5">Position</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput5">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput6">License</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput6">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput7">Tax Number</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput7">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput8">Phone</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput8">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput9">Fax Number</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput9">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput10">Mobile</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput10">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput11">Language</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput11">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput12">Company Name</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput12">
-												</div>
-											</div>
-											<div class="col-xl-12">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInput13">Address</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInput13">
-												</div>
-											</div>
-											<div class="col-xl-12">
-												<div class="my_profile_setting_textarea">
-												    <label for="exampleFormControlTextarea1">About me</label>
-												    <textarea class="form-control" id="exampleFormControlTextarea1" rows="7"></textarea>
-												</div>
+												<div class="error">{{form_without_rendering.additional_documents.errors}}</div>
 											</div>
 											<div class="col-xl-12 text-right">
 												<div class="my_profile_setting_input">
 													<button class="btn btn1">View Public Profile</button>
-													<button class="btn btn2">Update Profile</button>
+													<button type="submit" name="profile_info" class="btn btn2">Update Profile</button>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+						</form>
+
 							<div class="my_dashboard_review mt30">
 								<div class="row">
 									<div class="col-xl-2">
@@ -286,4 +284,35 @@
 	<script type="text/javascript" src="{% static 'js/wow.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/smartuploader.js' %}"></script>
 	<script type="text/javascript" src="{% static 'js/dashboard-script.js' %}"></script>
+	<script>
+        // JavaScript to handle file uploads and display
+        const fileInput = document.getElementById('file-upload');
+        const fileListDisplay = document.getElementById('file-list-display');
+
+        fileInput.addEventListener('change', function() {
+            // Append the new files to the existing list
+            Array.from(fileInput.files).forEach(file => {
+                const listItem = document.createElement('li');
+                listItem.textContent = file.name;
+                fileListDisplay.appendChild(listItem);
+            });
+        });
+    </script>
+	<script>
+        function generateUsername() {
+			const companyName = document.getElementById('id_name').value;
+			let username; // Declare the variable at the start
+		
+			if (!companyName) {
+				const firstName = document.getElementById('id_first_name').value;
+				const surname = document.getElementById('id_last_name').value;
+				username = firstName + ' ' + surname; // Assign value based on name and surname
+			} else {
+				username = companyName; // Assign company name if it exists
+			}
+		
+			document.getElementById('username').value = username; // Set the username field
+		}
+		
+    </script>
 {% endblock additional_js %}
