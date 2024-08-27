@@ -79,8 +79,24 @@
                                         </ul>
                                     </div>
                                 {% endif %}
+                                <div id="service_providerDiv1" class="form-group ui_kit_select_search mb0">
+                                    <select id="service_provider1" name="service_provider" class="selectpicker" data-live-search="true" onchange="toggleSelect1()" data-width="100%">
+                                        {% for value, label in service_providers %}
+                                            <option value="{{ value }}" {% if value == form.service_provider.value %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                {% if form.service_provider.errors %}
+                                    <div id="service_provider-error" class="error">
+                                        <ul>
+                                            {% for error in form.service_provider.errors %}
+                                                <li>{{error}}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
                                 <div id="serviceDiv1" class="form-group ui_kit_select_search mb0">
-                                    <select id='service1' name="service" class="selectpicker" data-live-search="true" onchange="toggleSelect1()" data-width="100%">
+                                    <select id='service1' name="service" class="selectpicker" data-live-search="true" data-width="100%">
                                         {% for value, label in services %}
                                             <option value="{{ value }}" {% if value == form.service.value %}selected{% endif %}>{{ label }}</option>
                                         {% endfor %}
@@ -96,22 +112,6 @@
                                     </div>
                                 {% endif %}
 
-                                <div id="service_providerDiv1" class="form-group ui_kit_select_search mb0">
-                                    <select id="service_provider1" name="service_provider" class="selectpicker" data-live-search="true" data-width="100%">
-                                        <option value="">Select</option>
-                                        <option value="CY">Company</option>
-                                        <option value="PE">Private Entrepreneur</option>
-                                    </select>
-                                </div>
-                                {% if form.service_provider.errors %}
-                                    <div id="service_provider-error" class="error">
-                                        <ul>
-                                            {% for error in form.service_provider.errors %}
-                                                <li>{{error}}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </div>
-                                {% endif %}
                                 <div class="form-group custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" id="exampleCheck21" onclick="toggleSubmitButton1()" {% if form %}checked{% endif %}>
                                     <label class="custom-control-label" for="exampleCheck21">I have read and accept the <a class="terms-and-conditions-link" href="{% url 'project_info:terms_conditions' %}">Terms and Privacy Policy?</a></label>
@@ -146,9 +146,9 @@
     <!-- Select options -->
     <script>
         function toggleSelect1() {
-            var firstSelect = document.getElementById('service1');
-            var secondSelect = document.getElementById('service_provider1');
-            var secondSelectContainer = document.getElementById('service_providerDiv1');
+            var firstSelect = document.getElementById('service_provider1');
+            var secondSelect = document.getElementById('service1');
+            var secondSelectContainer = document.getElementById('serviceDiv1');
             
             if (firstSelect.value === '' || firstSelect.value === 'US') {
                 secondSelectContainer.style.display = 'none';
@@ -165,7 +165,7 @@
             toggleSelect1();
         });
         // Also call toggleSelect when the first select value changes
-        document.getElementById('service1').addEventListener('change', toggleSelect1);
+        document.getElementById('service_provider1').addEventListener('change', toggleSelect1);
     </script>
 
     <!-- Error handling -->

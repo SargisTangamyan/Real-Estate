@@ -2,7 +2,6 @@ from user_profile.views import get_model
 def registration_info(request):
         SERVICE_CHOICES = (
         ('', 'Select'),
-        ('US', 'User'),
         ('SE', 'Seller'),
         ('RE', 'Renter'),
         ('SAR', 'Seller And Renter')
@@ -10,6 +9,7 @@ def registration_info(request):
 
         SERVICE_PROVIDER_CHOICES = (
             ('', 'Select'),
+            ('US', 'User'),
             ('CY', 'Company'),
             ('PE', 'Private Entrepreneur'),
         )

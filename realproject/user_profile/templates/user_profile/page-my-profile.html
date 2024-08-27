@@ -123,6 +123,7 @@
 												</div>
 											</div>
 											{{form}}
+											{% if user.service_provider != 'US' %}
 											<div class="col-lg-6 col-xl-6">	
 												<div class="upload-title">Additional Documents</div>
 												<div class="upload-box">
@@ -140,9 +141,10 @@
 												</div>
 												<div class="error">{{form_without_rendering.additional_documents.errors}}</div>
 											</div>
+											{% endif %}
 											<div class="col-xl-12 text-right">
 												<div class="my_profile_setting_input">
-													{% if user.service != 'US' %}<button class="btn btn1">View Public Profile</button>{% endif %}
+													{% if user.service_provider != 'US' %}<button class="btn btn1">View Public Profile</button>{% endif %}
 													<button type="submit" name="profile_info" class="btn btn2">Update Profile</button>
 												</div>
 											</div>
@@ -152,7 +154,7 @@
 							</div>
 						</form>
 
-						{% if user.service != 'US' %}
+						{% if user.service_provider != 'US' %}
 							<div class="my_dashboard_review mt30">
 								<div class="row">
 									<div class="col-xl-2">
@@ -258,9 +260,6 @@
 												</div>
 											</div>
 											<div class="col-xl-12">
-												<div class="my_profile_setting_input float-left fn-520">
-													<button class="btn btn3 btn-dark">Update Profile</button>
-												</div>
 												<div class="my_profile_setting_input float-right fn-520">
 													<button class="btn btn2">Update Profile</button>
 												</div>
@@ -269,6 +268,30 @@
 									</div>
 								</div>
 							</div>
+
+							<div class="my_dashboard_review mt30">
+								<div class="row">
+									<div class="col-xl-2">
+										<h4>Account deletion</h4>
+									</div>
+									<div class="col-xl-10">
+										<div class="row">
+											<div class="col-xl-6">
+												<div class="my_profile_setting_input form-group">
+											    	<label for="deleteinput">Password</label>
+											    	<input type="text" class="form-control" id="deleteinput">
+												</div>
+											</div>
+											<div class="col-xl-12">
+												<div class="my_profile_setting_input float-right fn-520">
+													<button type="submit" class="btn btn3 btn-dark">Delete</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
 						</div>
 					</div>
 					<div class="row mt10">
@@ -307,33 +330,40 @@
         });
     </script>
 	<script>
-		function generateUsername() {
-			// Get the elements by their IDs
-			const companyNameElement = document.getElementById('id_name');
-			const firstNameElement = document.getElementById('id_first_name');
-			const surnameElement = document.getElementById('id_last_name');
-			const usernameElement = document.getElementById('username');
-	
-			// Initialize the username variable
-			let username = '';
-	
-			// Check if the company name element exists and has a value
-			if (companyNameElement && companyNameElement.value) {
-				username = companyNameElement.value;
-			} else {
-				// Check if first name and surname elements exist
-				const firstName = firstNameElement ? firstNameElement.value : '';
-				const surname = surnameElement ? surnameElement.value : '';
-	
-				// Combine first name and surname to create the username
-				username = firstName + ' ' + surname;
+		document.addEventListener('DOMContentLoaded', function() {
+			function generateUsername() {
+				// Get the elements by their IDs
+				const companyNameElement = document.getElementById('id_name');
+				const firstNameElement = document.getElementById('id_first_name');
+				const surnameElement = document.getElementById('id_last_name');
+				const usernameElement = document.getElementById('username');
+
+				// Initialize the username variable
+				let username = '';
+
+				// Check if the company name element exists and has a value
+				if (companyNameElement && companyNameElement.value) {
+					username = companyNameElement.value;
+				} else {
+					// Check if first name and surname elements exist and have values
+					const firstName = firstNameElement && firstNameElement.value ? firstNameElement.value : '';
+					const surname = surnameElement && surnameElement.value ? surnameElement.value : '';
+
+					// Combine first name and surname to create the username
+					if (firstName || surname) {
+						username = firstName + ' ' + surname;
+					}
+				}
+
+				// Set the username field only if the username element exists and it's not already filled
+				if (usernameElement && !usernameElement.value) {
+					usernameElement.value = username;
+				}
 			}
-	
-			// Set the username field only if the username element exists
-			if (usernameElement) {
-				usernameElement.value = username;
-			}
-		}
-	</script>
+
+			// Call the generateUsername function on page load
+			generateUsername();
+		});
+</script>
 	
 {% endblock additional_js %}

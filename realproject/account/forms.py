@@ -24,18 +24,6 @@ class RegistrationForm(forms.ModelForm):
             raise forms.ValidationError('An account with this email already exists.')
         return email
     
-    def clean_service_provider(self):
-        cd = self.cleaned_data
-        service_provider = cd.get('service_provider', '')
-        service = cd.get('service')
-
-        if service:
-            if service != 'US' and service_provider == None:
-                raise forms.ValidationError('Service provider field can not be empty.')
-            if service == 'US':
-                return None
-
-        return service_provider
     
     def clean(self):
         cleaned_data = super().clean()

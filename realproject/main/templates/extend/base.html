@@ -440,23 +440,24 @@
 										    </div>
 										</div>
 										<div id="password2Error" class="error"></div>
+
+										<div id="service_providerDiv" class="form-group ui_kit_select_search mb0">
+											<select id="service_provider" name="service_provider" class="selectpicker" data-live-search="true" data-width="100%" onchange="toggleSelect()">
+												{% for value, label in service_providers %}
+													<option value="{{ value }}">{{ label }}</option>
+												{% endfor %}
+											</select>
+										</div>
+										<div id="service_providerError" class="error"></div>
+
 										<div id="serviceDiv" class="form-group ui_kit_select_search mb0">
-											<select id='service' name="service" class="selectpicker" data-live-search="true" onchange="toggleSelect()" data-width="100%">
+											<select id='service' name="service" class="selectpicker" data-live-search="true" data-width="100%">
 												{% for value, label in services %}
 													<option value="{{ value }}">{{ label }}</option>
 												{% endfor %}
 											</select>
 										</div>
 										<div id="serviceError" class="error"></div>
-
-										<div id="service_providerDiv" class="form-group ui_kit_select_search mb0">
-											<select id="service_provider" name="service_provider" class="selectpicker" data-live-search="true" data-width="100%">
-												<option value="">Select</option>
-												<option value="CY">Company</option>
-												<option value="PE">Private Entrepreneur</option>
-											</select>
-										</div>
-										<div id="service_providerError" class="error"></div>
 
 										<div class="form-group custom-control custom-checkbox">
 											<input type="checkbox" class="custom-control-input"  id="exampleCheck2" onclick="toggleSubmitButton()">
@@ -722,9 +723,9 @@
 <!-- Select options -->
 <script>
 	function toggleSelect() {
-		var firstSelect = document.getElementById('service');
-		var secondSelect = document.getElementById('service_provider');
-		var secondSelectContainer = document.getElementById('service_providerDiv');
+		var firstSelect = document.getElementById('service_provider');
+		var secondSelect = document.getElementById('service');
+		var secondSelectContainer = document.getElementById('serviceDiv');
 		
 		if (firstSelect.value === '' || firstSelect.value === 'US') {
 			secondSelectContainer.style.display = 'none';
@@ -741,7 +742,7 @@
 		toggleSelect();
 	});
 	// Also call toggleSelect when the first select value changes
-	document.getElementById('service').addEventListener('change', toggleSelect);
+	document.getElementById('service_provider').addEventListener('change', toggleSelect);
 	
 </script>
 

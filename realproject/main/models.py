@@ -37,7 +37,6 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     SERVICE_CHOICES = (
         ('', 'Select'),
-        ('US', 'User'),
         ('SE', 'Seller'),
         ('RE', 'Renter'),
         ('SAR', 'Seller And Renter')
@@ -45,6 +44,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     SERVICE_PROVIDER_CHOICES = (
         ('', 'Select'),
+        ('US', 'User'),
         ('CY', 'Company'),
         ('AG', 'Agent'),
         ('PE', 'Private Entrepreneur'),
@@ -53,8 +53,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     username = models.CharField(max_length=150, blank=True)
     email = models.EmailField(unique=True)
-    service = models.CharField(max_length=100, choices=SERVICE_CHOICES)
-    service_provider = models.CharField(max_length=100, choices=SERVICE_PROVIDER_CHOICES, null=True, blank=True, default='')
+    service_provider = models.CharField(max_length=100, choices=SERVICE_PROVIDER_CHOICES, null=True)
+    service = models.CharField(max_length=100, choices=SERVICE_CHOICES, blank=True, default=None)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     
@@ -73,13 +73,29 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 # -------------------------------------------------- Simple User --------------------------------------------------
+def user_photo_upload_to(instance, filename):
+    return f"user_account/{instance.user.email}"
+
 class SimpleUserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="User", blank=True, related_name='user_profile')
-    photo = models.ImageField(upload_to="user_account/%Y/%m/%d/", blank=True, null=True, verbose_name="Photo")
+    photo = models.ImageField(upload_to=user_photo_upload_to, blank=True, null=True, verbose_name="Photo")
     first_name = models.CharField(max_length=100, blank=True, verbose_name="Name")
     last_name = models.CharField(max_length=100, blank=True, verbose_name="Surname")
     country = CountryField(null=True)
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
+
+    def save(self, *args, **kwargs):
+        # Check for existing file and delete it before saving a new one
+        try:
+            # Check if the instance already has a photo and it's different from the new photo
+            this = SimpleUserProfile.objects.get(id=self.id)
+            if this.photo != self.photo:
+                this.photo.delete(save=False)  # Delete the old photo file
+        except SimpleUserProfile.DoesNotExist:
+            # If the instance is new, there's no old photo to delete
+            pass
+
+        super(SimpleUserProfile, self).save(*args, **kwargs)
     
     class Meta:
         verbose_name = 'SIMPLE USER'
@@ -88,8 +104,11 @@ class SimpleUserProfile(models.Model):
 # -------------------------------------------------- Company --------------------------------------------------
 def company_photo_upload_to(instance, filename):
     company_name = slugify(instance.name)
-    return f"companies/{company_name}/company/{filename}"
+    return f"companies/{company_name}/photo/{filename}"
 
+def company_file_upload_to(instance, filename):
+    company_name = slugify(instance.name)
+    return f"companies/{company_name}/files/{filename}"
 
 class CompanyProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="User", blank=True, related_name='company_profile')
@@ -105,7 +124,7 @@ class CompanyProfile(models.Model):
     fax_number = models.CharField(max_length=100, blank=True, verbose_name="Fax Number")
     address = models.CharField(max_length=200, blank=True, verbose_name="Address")
     description = models.TextField(blank=True, verbose_name="Description")
-    additional_documents = models.FileField(verbose_name="Documents (proofs)", upload_to=company_photo_upload_to)
+    additional_documents = models.FileField(verbose_name="Documents (proofs)", upload_to=company_file_upload_to)
 
     # Social Media Links
     website = models.URLField(blank=True)
@@ -115,6 +134,19 @@ class CompanyProfile(models.Model):
     instagram = models.URLField(blank=True)
     youtube = models.URLField(blank=True)
     pinterest = models.URLField(blank=True)
+
+    def save(self, *args, **kwargs):
+        # Check for existing file and delete it before saving a new one
+        try:
+            # Check if the instance already has a photo and it's different from the new photo
+            this = CompanyProfile.objects.get(id=self.id)
+            if this.photo != self.photo:
+                this.photo.delete(save=False)  # Delete the old photo file
+        except CompanyProfile.DoesNotExist:
+            # If the instance is new, there's no old photo to delete
+            pass
+
+        super(CompanyProfile, self).save(*args, **kwargs)
    
     class Meta:
         verbose_name = 'COMPANY'
@@ -127,7 +159,11 @@ class CompanyProfile(models.Model):
 # -------------------------------------------------- Agent --------------------------------------------------
 def agent_photo_upload_to(instance, filename):
     company_name = slugify(instance.company)
-    return f"companies/{company_name}/agents/{filename}" 
+    return f"companies/{company_name}/agents/{instance.user.email}/photo/{filename}" 
+
+def agent_file_upload_to(instance, filename):
+    company_name = slugify(instance.company)
+    return f"companies/{company_name}/agents/{instance.user.email}/files/{filename}" 
 
 class AgentProfile(models.Model):
     POSITION_CHOICES = [
@@ -153,7 +189,7 @@ class AgentProfile(models.Model):
     office_number = PhoneNumberField(blank=True, verbose_name="Office Number")
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
     description = models.TextField(blank=True, verbose_name="Description")
-    additional_documents = models.FileField(upload_to=agent_photo_upload_to ,blank=True, verbose_name="Documents (proofs)")
+    additional_documents = models.FileField(upload_to=agent_file_upload_to ,blank=True, verbose_name="Documents (proofs)")
 
 
     # Social Media Links
@@ -165,6 +201,19 @@ class AgentProfile(models.Model):
     youtube = models.URLField(blank=True)
     pinterest = models.URLField(blank=True)
 
+    def save(self, *args, **kwargs):
+        # Check for existing file and delete it before saving a new one
+        try:
+            # Check if the instance already has a photo and it's different from the new photo
+            this = AgentProfile.objects.get(id=self.id)
+            if this.photo != self.photo:
+                this.photo.delete(save=False)  # Delete the old photo file
+        except AgentProfile.DoesNotExist:
+            # If the instance is new, there's no old photo to delete
+            pass
+
+        super(AgentProfile, self).save(*args, **kwargs)
+
     class Meta:
         verbose_name = 'AGENT'
         verbose_name_plural = 'AGENTS' 
@@ -174,8 +223,11 @@ class AgentProfile(models.Model):
 
 
 # -------------------------------------------------- PrivateEnterpreneur --------------------------------------------------
-def private_ent_photo_upload_to(filename):
-    return f"Entrepreneurs/{filename}" 
+def private_ent_photo_upload_to(instance, filename):
+    return f"Entrepreneurs/{instance.user.email}/photo/{filename}" 
+
+def private_ent_file_upload_to(instance, filename):
+    return f"Entrepreneurs/{instance.user.email}/files/{filename}" 
 
 class PrivateEntrepreneurProfile(models.Model):
     # Account Information
@@ -187,7 +239,7 @@ class PrivateEntrepreneurProfile(models.Model):
     license_number = models.CharField(max_length=100, verbose_name="License Number")
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
     description = models.TextField(blank=True, verbose_name="Description")
-    additional_documents = models.FileField(upload_to=private_ent_photo_upload_to ,verbose_name="Documents (proofs)")
+    additional_documents = models.FileField(upload_to=private_ent_file_upload_to ,verbose_name="Documents (proofs)")
 
     # Social Media Links
     website = models.URLField(blank=True)
@@ -197,6 +249,19 @@ class PrivateEntrepreneurProfile(models.Model):
     instagram = models.URLField(blank=True)
     youtube = models.URLField(blank=True)
     pinterest = models.URLField(blank=True)
+
+    def save(self, *args, **kwargs):
+        # Check for existing file and delete it before saving a new one
+        try:
+            # Check if the instance already has a photo and it's different from the new photo
+            this = PrivateEntrepreneurProfile.objects.get(id=self.id)
+            if this.photo != self.photo:
+                this.photo.delete(save=False)  # Delete the old photo file
+        except PrivateEntrepreneurProfile.DoesNotExist:
+            # If the instance is new, there's no old photo to delete
+            pass
+
+        super(PrivateEntrepreneurProfile, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'PRIVATE ENTERPRENEUR'

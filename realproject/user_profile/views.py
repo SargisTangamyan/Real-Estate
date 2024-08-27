@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # From the application
-from .forms import CompanyForm, UserForm
+from .forms import CompanyForm, UserForm, PrivateEntrepreneurForm
 
 # From main
 from main.models import CustomUser, CompanyProfile, AgentProfile, PrivateEntrepreneurProfile, SimpleUserProfile
@@ -12,7 +12,7 @@ from main.models import CustomUser, CompanyProfile, AgentProfile, PrivateEntrepr
 USER_TYPES = {
     'CY': {'model': CompanyProfile, 'form': CompanyForm},
     'AG': {'model': AgentProfile, 'form': None},
-    'PE': {'model': PrivateEntrepreneurProfile, 'form': None},
+    'PE': {'model': PrivateEntrepreneurProfile, 'form': PrivateEntrepreneurForm},
     'US': {'model': SimpleUserProfile, 'form': UserForm},
 }
 

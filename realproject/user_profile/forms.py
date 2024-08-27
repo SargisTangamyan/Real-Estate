@@ -44,3 +44,23 @@ class UserForm(forms.ModelForm):
                 field.widget.attrs.update({'class': 'form-control'})
 
 
+
+class PrivateEntrepreneurForm(forms.ModelForm):
+    country = CountryField(blank_label="Select a country").formfield()
+
+    class Meta:
+        model = PrivateEntrepreneurProfile
+        exclude = ['website', 'facebook', 'twitter', 'linkedin', 'instagram', 'youtube', 'pinterest',]
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 7,}),
+            "country": CountrySelectWidget()
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name not in ['photo', 'additional_documents']:
+                if field_name in ['first_name', 'last_name']:
+                    field.widget.attrs.update({'oninput': 'generateUsername()'})
+                field.widget.attrs.update({'class': 'form-control'})
+

@@ -38,9 +38,9 @@ def contact_us(request):
             service_provider = None
             if request.user.is_authenticated:
                 username = request.user.email
-                service = request.user.get_service_display()
-                if service != 'US':
-                    service_provider = request.user.get_service_provider_display()
+                service_provider = request.user.get_service_provider_display()
+                if service_provider != 'US':
+                    service = request.user.get_service_display()
 
             # Prepare the email content
             text_content = f'''
