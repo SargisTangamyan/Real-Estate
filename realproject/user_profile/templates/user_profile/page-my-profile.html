@@ -100,7 +100,7 @@
 									<div class="col-xl-10">
 										<div class="row">
 											<div class="col-lg-12">
-												<div class="wrap-custom-file" {% if profile_data %}style="background-image: url('{{ profile_data.photo.url }}'); background-size: cover; background-position: center; background-repeat: no-repeat;"{% endif %}>
+												<div class="wrap-custom-file" {% if user_photo %}style="background-image: url('{{ user_photo }}'); background-size: cover; background-position: center; background-repeat: no-repeat;"{% endif %}>
 												    <input type="file" name="photo" id="image1" accept=".gif, .jpg, .png"/>
 												    <label  for="image1">
 												      	<span><i class="flaticon-download"></i> Upload Photo </span>
@@ -112,7 +112,7 @@
 											<div class="col-lg-6 col-xl-6">
 												<div class="my_profile_setting_input form-group">
 													<label for="username">Username</label>
-													<input type="text" class="form-control" name="username" id="username" readonly>
+													<input type="text" class="form-control" name="username" id="username" value="{{user.username}}" readonly>
 													<div class="help-text">This field will be filled automatically</div>
 												</div>
 											</div>
@@ -129,14 +129,20 @@
 													<label for="file-upload">Choose Files</label>
 													<input name="additional_documents" type="file" id="file-upload" multiple>
 													<div class="file-list">
-														<ul id="file-list-display"></ul>
+														<ul id="file-list-display">
+															{% if documents %}
+																{% for document in documents %}
+																	<li>{{document}}</li>
+																{% endfor %}
+															{% endif %}
+														</ul>
 													</div>
 												</div>
 												<div class="error">{{form_without_rendering.additional_documents.errors}}</div>
 											</div>
 											<div class="col-xl-12 text-right">
 												<div class="my_profile_setting_input">
-													<button class="btn btn1">View Public Profile</button>
+													{% if user.service != 'US' %}<button class="btn btn1">View Public Profile</button>{% endif %}
 													<button type="submit" name="profile_info" class="btn btn2">Update Profile</button>
 												</div>
 											</div>
@@ -146,6 +152,7 @@
 							</div>
 						</form>
 
+						{% if user.service != 'US' %}
 							<div class="my_dashboard_review mt30">
 								<div class="row">
 									<div class="col-xl-2">
@@ -222,6 +229,7 @@
 									</div>
 								</div>
 							</div>
+							{% endif %}
 							<div class="my_dashboard_review mt30">
 								<div class="row">
 									<div class="col-xl-2">
@@ -299,20 +307,33 @@
         });
     </script>
 	<script>
-        function generateUsername() {
-			const companyName = document.getElementById('id_name').value;
-			let username; // Declare the variable at the start
-		
-			if (!companyName) {
-				const firstName = document.getElementById('id_first_name').value;
-				const surname = document.getElementById('id_last_name').value;
-				username = firstName + ' ' + surname; // Assign value based on name and surname
+		function generateUsername() {
+			// Get the elements by their IDs
+			const companyNameElement = document.getElementById('id_name');
+			const firstNameElement = document.getElementById('id_first_name');
+			const surnameElement = document.getElementById('id_last_name');
+			const usernameElement = document.getElementById('username');
+	
+			// Initialize the username variable
+			let username = '';
+	
+			// Check if the company name element exists and has a value
+			if (companyNameElement && companyNameElement.value) {
+				username = companyNameElement.value;
 			} else {
-				username = companyName; // Assign company name if it exists
+				// Check if first name and surname elements exist
+				const firstName = firstNameElement ? firstNameElement.value : '';
+				const surname = surnameElement ? surnameElement.value : '';
+	
+				// Combine first name and surname to create the username
+				username = firstName + ' ' + surname;
 			}
-		
-			document.getElementById('username').value = username; // Set the username field
+	
+			// Set the username field only if the username element exists
+			if (usernameElement) {
+				usernameElement.value = username;
+			}
 		}
-		
-    </script>
+	</script>
+	
 {% endblock additional_js %}

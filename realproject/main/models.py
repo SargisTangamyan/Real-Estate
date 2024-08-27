@@ -93,7 +93,7 @@ def company_photo_upload_to(instance, filename):
 
 class CompanyProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="User", blank=True, related_name='company_profile')
-    photo = models.ImageField(upload_to='companies/%Y/%m/%d/', verbose_name="Company Logo")
+    photo = models.ImageField(upload_to=company_photo_upload_to, verbose_name="Company Logo")
     name = models.CharField(max_length=100, unique=True, verbose_name="Company Name")
     ceo_name = models.CharField(max_length=100, verbose_name="(CEO) First Name", null=True)
     ceo_surname = models.CharField(max_length=100, verbose_name="(CEO) Last Name", null=True)
@@ -105,7 +105,7 @@ class CompanyProfile(models.Model):
     fax_number = models.CharField(max_length=100, blank=True, verbose_name="Fax Number")
     address = models.CharField(max_length=200, blank=True, verbose_name="Address")
     description = models.TextField(blank=True, verbose_name="Description")
-    additional_documents = models.FileField(verbose_name="Documents (proofs)")
+    additional_documents = models.FileField(verbose_name="Documents (proofs)", upload_to=company_photo_upload_to)
 
     # Social Media Links
     website = models.URLField(blank=True)
@@ -153,7 +153,7 @@ class AgentProfile(models.Model):
     office_number = PhoneNumberField(blank=True, verbose_name="Office Number")
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
     description = models.TextField(blank=True, verbose_name="Description")
-    additional_documents = models.FileField(blank=True, verbose_name="Documents (proofs)")
+    additional_documents = models.FileField(upload_to=agent_photo_upload_to ,blank=True, verbose_name="Documents (proofs)")
 
 
     # Social Media Links
@@ -187,7 +187,7 @@ class PrivateEntrepreneurProfile(models.Model):
     license_number = models.CharField(max_length=100, verbose_name="License Number")
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
     description = models.TextField(blank=True, verbose_name="Description")
-    additional_documents = models.FileField(verbose_name="Documents (proofs)")
+    additional_documents = models.FileField(upload_to=private_ent_photo_upload_to ,verbose_name="Documents (proofs)")
 
     # Social Media Links
     website = models.URLField(blank=True)

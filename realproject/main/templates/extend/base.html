@@ -291,10 +291,10 @@
 	                {% if user.is_authenticated %}
 						<li class="user_setting">
 							<div class="dropdown">
-								<a class="btn dropdown-toggle" href="#" data-toggle="dropdown"><img class="rounded-circle user-photo"  src="{% static 'images/own/no_profile.jpg' %}" alt="me"> <span class="dn-1199">{% if user.username %}{{user.username}}{% else %}Unkown{% endif %}</span></a>
+								<a class="btn dropdown-toggle" href="#" data-toggle="dropdown"><img class="rounded-circle user-photo"  src="{% if user_photo %}{{user_photo}}{% else %}{% static 'images/own/no_profile.jpg' %}{% endif %}" alt="user photo"> <span class="dn-1199">{% if user.username %}{{user.username}}{% else %}Unkown{% endif %}</span></a>
 								<div class="dropdown-menu">
 									<div class="user_set_header">
-										<img class="float-left rounded-circle user-photo" src="{% static 'images/own/no_profile.jpg' %}" alt="me">
+										<img class="float-left rounded-circle user-photo" src="{% if user_photo %}{{user_photo}}{% else %}{% static 'images/own/no_profile.jpg' %}{% endif %}" alt="user photo">
 									</div>
 									<div class="user_set_header">
 										<p>{% if user.username %}{{user.username}}{% else %}Unkown{% endif %} <br><span class="address">{{user.email}}</span></p>
