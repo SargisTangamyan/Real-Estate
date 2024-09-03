@@ -33,6 +33,7 @@ class CustomUserManager(BaseUserManager):
 
 
 
+
 # -------------------------------------------------- Base User --------------------------------------------------
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     SERVICE_CHOICES = (
@@ -71,6 +72,34 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'BASE USERS'   
 
 
+# File upload handling
+def file_upload(instance, filename):
+    service_provider = instance.user.service_provider
+    if service_provider == 'CY':
+        return f"companies/{instance.user.company_profile.name}/files/{filename}"
+    elif service_provider == 'AG':
+        return f"companies/{instance.user.agent_profile.company}/agents/{instance.user.email}/files/{filename}" 
+    elif service_provider == 'PE':
+        return f"Entrepreneurs/{instance.user.email}/files/{filename}" 
+    return f'exceptions/{filename}'
+
+class UploadedFile(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_documents')
+    file = models.FileField(upload_to=file_upload)
+
+    def delete_user_files(self):
+            """Method to delete all files related to the user."""
+            user_files = UploadedFile.objects.filter(user=self.user)
+            for user_file in user_files:
+                user_file.file.delete(save=False)  # Delete the actual file from storage
+                user_file.delete()  # Delete the record from the database
+
+    def delete(self, *args, **kwargs):
+        """Override the delete method if necessary."""
+        # Optionally, perform cleanup specific to this instance here
+        self.file.delete(save=False)  # Delete the actual file associated with this instance
+        super().delete(*args, **kwargs)
+
 
 # -------------------------------------------------- Simple User --------------------------------------------------
 def user_photo_upload_to(instance, filename):
@@ -103,12 +132,7 @@ class SimpleUserProfile(models.Model):
 
 # -------------------------------------------------- Company --------------------------------------------------
 def company_photo_upload_to(instance, filename):
-    company_name = slugify(instance.name)
-    return f"companies/{company_name}/photo/{filename}"
-
-def company_file_upload_to(instance, filename):
-    company_name = slugify(instance.name)
-    return f"companies/{company_name}/files/{filename}"
+    return f"companies/{instance.name}/photo/{filename}"
 
 class CompanyProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="User", blank=True, related_name='company_profile')
@@ -124,7 +148,6 @@ class CompanyProfile(models.Model):
     fax_number = models.CharField(max_length=100, blank=True, verbose_name="Fax Number")
     address = models.CharField(max_length=200, blank=True, verbose_name="Address")
     description = models.TextField(blank=True, verbose_name="Description")
-    additional_documents = models.FileField(verbose_name="Documents (proofs)", upload_to=company_file_upload_to)
 
     # Social Media Links
     website = models.URLField(blank=True)
@@ -161,10 +184,6 @@ def agent_photo_upload_to(instance, filename):
     company_name = slugify(instance.company)
     return f"companies/{company_name}/agents/{instance.user.email}/photo/{filename}" 
 
-def agent_file_upload_to(instance, filename):
-    company_name = slugify(instance.company)
-    return f"companies/{company_name}/agents/{instance.user.email}/files/{filename}" 
-
 class AgentProfile(models.Model):
     POSITION_CHOICES = [
         ('', 'Select a position'),  # Empty choice
@@ -189,8 +208,6 @@ class AgentProfile(models.Model):
     office_number = PhoneNumberField(blank=True, verbose_name="Office Number")
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
     description = models.TextField(blank=True, verbose_name="Description")
-    additional_documents = models.FileField(upload_to=agent_file_upload_to ,blank=True, verbose_name="Documents (proofs)")
-
 
     # Social Media Links
     website = models.URLField(blank=True)
@@ -226,9 +243,6 @@ class AgentProfile(models.Model):
 def private_ent_photo_upload_to(instance, filename):
     return f"Entrepreneurs/{instance.user.email}/photo/{filename}" 
 
-def private_ent_file_upload_to(instance, filename):
-    return f"Entrepreneurs/{instance.user.email}/files/{filename}" 
-
 class PrivateEntrepreneurProfile(models.Model):
     # Account Information
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="User", blank=True, related_name='private_entrepreneur_profile')
@@ -239,7 +253,6 @@ class PrivateEntrepreneurProfile(models.Model):
     license_number = models.CharField(max_length=100, verbose_name="License Number")
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
     description = models.TextField(blank=True, verbose_name="Description")
-    additional_documents = models.FileField(upload_to=private_ent_file_upload_to ,verbose_name="Documents (proofs)")
 
     # Social Media Links
     website = models.URLField(blank=True)

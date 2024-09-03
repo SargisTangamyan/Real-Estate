@@ -64,9 +64,10 @@ INSTALLED_APPS = [
     'project_info.apps.ProjectInfoConfig',
     'user_profile.apps.UserProfileConfig',
 
-    # Additional
+    # Additional Packages
     'phonenumber_field',
     'django_countries',
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -77,6 +78,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #Additional
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # From the user_profile
+    # 'user_profile.middleware.LogRequestFilesMiddleware',
 ]
 
 ROOT_URLCONF = 'realproject.urls'
@@ -182,3 +187,8 @@ AUTH_USER_MODEL = 'main.CustomUser'
 # Authentication settings
 LOGIN_URL = 'login_page'
 
+
+# Debug toolbar configuration
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
