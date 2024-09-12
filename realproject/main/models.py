@@ -53,9 +53,11 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
     username = models.CharField(max_length=150, blank=True)
+    slug = models.SlugField(max_length=255, blank=True, null=True)
     email = models.EmailField(unique=True)
     service_provider = models.CharField(max_length=100, choices=SERVICE_PROVIDER_CHOICES, null=True)
     service = models.CharField(max_length=100, choices=SERVICE_CHOICES, blank=True, default=None)
+    profile_status = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     
@@ -66,7 +68,18 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email 
-
+    
+    def get_profile(self):
+        if self.service_provider == 'US':
+            return self.user_profile
+        elif self.service_provider == 'PE':
+            return self.private_entrepreneur_profile
+        elif self.service_provider == 'AG':
+            return self.agent_profile
+        elif self.service_provider == 'CY':
+            return self.company_profile
+        
+    
     class Meta:
         verbose_name = 'BASE USER'
         verbose_name_plural = 'BASE USERS'   
@@ -113,6 +126,9 @@ class SimpleUserProfile(models.Model):
     country = CountryField(null=True)
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
     def save(self, *args, **kwargs):
         # Check for existing file and delete it before saving a new one
         try:
@@ -148,15 +164,6 @@ class CompanyProfile(models.Model):
     fax_number = models.CharField(max_length=100, blank=True, verbose_name="Fax Number")
     address = models.CharField(max_length=200, blank=True, verbose_name="Address")
     description = models.TextField(blank=True, verbose_name="Description")
-
-    # Social Media Links
-    website = models.URLField(blank=True)
-    facebook = models.URLField(blank=True)
-    twitter = models.URLField(blank=True)
-    linkedin = models.URLField(blank=True)
-    instagram = models.URLField(blank=True)
-    youtube = models.URLField(blank=True)
-    pinterest = models.URLField(blank=True)
 
     def save(self, *args, **kwargs):
         # Check for existing file and delete it before saving a new one
@@ -209,15 +216,6 @@ class AgentProfile(models.Model):
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
     description = models.TextField(blank=True, verbose_name="Description")
 
-    # Social Media Links
-    website = models.URLField(blank=True)
-    facebook = models.URLField(blank=True)
-    twitter = models.URLField(blank=True)
-    linkedin = models.URLField(blank=True)
-    instagram = models.URLField(blank=True)
-    youtube = models.URLField(blank=True)
-    pinterest = models.URLField(blank=True)
-
     def save(self, *args, **kwargs):
         # Check for existing file and delete it before saving a new one
         try:
@@ -254,15 +252,6 @@ class PrivateEntrepreneurProfile(models.Model):
     phone_number = PhoneNumberField(blank=True, verbose_name="Phone Number")
     description = models.TextField(blank=True, verbose_name="Description")
 
-    # Social Media Links
-    website = models.URLField(blank=True)
-    facebook = models.URLField(blank=True)
-    twitter = models.URLField(blank=True)
-    linkedin = models.URLField(blank=True)
-    instagram = models.URLField(blank=True)
-    youtube = models.URLField(blank=True)
-    pinterest = models.URLField(blank=True)
-
     def save(self, *args, **kwargs):
         # Check for existing file and delete it before saving a new one
         try:
@@ -282,3 +271,20 @@ class PrivateEntrepreneurProfile(models.Model):
     
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+
+class Social(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="User", blank=True, related_name='social') 
+    website = models.URLField(blank=True)
+    facebook = models.URLField(blank=True)
+    twitter = models.URLField(blank=True)
+    linkedin = models.URLField(blank=True)
+    instagram = models.URLField(blank=True)
+    youtube = models.URLField(blank=True)
+
+    class Meta:
+        verbose_name = 'Social Info'
+        verbose_name_plural = 'Social Info'
+    
+    def __str__(self) -> str:
+        return self.user.username

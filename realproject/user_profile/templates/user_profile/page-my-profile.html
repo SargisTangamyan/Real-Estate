@@ -57,6 +57,12 @@
     color: #721c24; /* Dark red text */
     font-size: 16px;
   }
+.close {
+	float: right;
+}
+.close:hover {
+	color: red;
+}
 
 {% endblock additional_css %}
 {% block content %}
@@ -150,7 +156,7 @@
 											{% endif %}
 											<div class="col-xl-12 text-right">
 												<div class="my_profile_setting_input">
-													{% if user.service_provider != 'US' %}<button class="btn btn1">View Public Profile</button>{% endif %}
+													{% if user.service_provider != 'US' and profile_data %}<a href="{% url 'user_profile:overview' user.id user.slug %}" class="btn btn1" style="padding: 15px;">View Public Profile</a>{% endif %}
 													<button type="submit" name="profile_info" class="btn btn2">Update Profile</button>
 												</div>
 											</div>
@@ -161,84 +167,76 @@
 						</form>
 
 						{% if user.service_provider != 'US' %}
+						<form action="{% url 'user_profile:my_profile' %}" method="post"> {% csrf_token %}
 							<div class="my_dashboard_review mt30">
+								{% if form_social.non_field_errors %}
+								<div class="ui_kit_message_box">
+									<div class="alert alart_style_four alert-dismissible fade show" role="alert">
+										{% for error in form_social.non_field_errors %}
+										  <ul style="margin: auto; text-align: center;">
+											<li>{{error}}</li>
+										  </ul>
+										{% endfor %}
+										<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+								{% endif %}
 								<div class="row">
 									<div class="col-xl-2">
 										<h4>Social Media</h4>
 									</div>
 									<div class="col-xl-10">
 										<div class="row">
+											{% for field in form_social %}
+											{% if field.name != 'user' %}
 											<div class="col-lg-6 col-xl-6">
 												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleSkype">Skype</label>
-											    	<input type="text" class="form-control" id="formGroupExampleSkype" placeholder="alitfn">
+											    	<label for="{{ field.id_for_label }}">{{ field.label }}</label>
+											    	<input name="{{ field.name }}" type="text" class="form-control" id="{{ field.id_for_label }}"  value="{{ field.value|default_if_none:'' }}">
+													{% if field.errors %}
+													<div class="error">
+														{% for error in field.errors%}
+														<ul>
+															<li>{{error}}</li>
+														</ul>
+														{% endfor %}
+													</div>
+													{% endif %}
 												</div>
 											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleWebsite">Website</label>
-											    	<input type="text" class="form-control" id="formGroupExampleWebsite" placeholder="creativelayers@gmail.com">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleFaceBook">Facebook</label>
-											    	<input type="text" class="form-control" id="formGroupExampleFaceBook">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleTwitter">Twitter</label>
-											    	<input type="text" class="form-control" id="formGroupExampleTwitter">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleLinkedin">Linkedin</label>
-											    	<input type="text" class="form-control" id="formGroupExampleLinkedin">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleInstagram">Instagram</label>
-											    	<input type="text" class="form-control" id="formGroupExampleInstagram">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleGooglePlus">Google Plus</label>
-											    	<input type="text" class="form-control" id="formGroupExampleGooglePlus">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleYoutube">Youtube</label>
-											    	<input type="text" class="form-control" id="formGroupExampleYoutube">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExamplePinterest">Pinterest</label>
-											    	<input type="text" class="form-control" id="formGroupExamplePinterest">
-												</div>
-											</div>
-											<div class="col-lg-6 col-xl-6">
-												<div class="my_profile_setting_input form-group">
-											    	<label for="formGroupExampleVimeo">Vimeo</label>
-											    	<input type="text" class="form-control" id="formGroupExampleVimeo">
-												</div>
-											</div>
+											{% endif %}
+											{% endfor %}
+											
 											<div class="col-xl-12 text-right">
 												<div class="my_profile_setting_input">
-													<button class="btn btn2">Update Profile</button>
+													<button name='social' type="submit" class="btn btn2">Update Profile</button>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+						</form>
 							{% endif %}
+
+							<form action="{% url 'user_profile:my_profile' %}" method="post"> {% csrf_token %}
 							<div class="my_dashboard_review mt30">
+								{% if changer_form.non_field_errors %}
+								<div class="ui_kit_message_box">
+									<div class="alert alart_style_four alert-dismissible fade show" role="alert">
+										{% for error in changer_form.non_field_errors %}
+										  <ul style="margin: auto; text-align: center;">
+											<li>{{error}}</li>
+										  </ul>
+										{% endfor %}
+										<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+								</div>
+								{% endif %}
 								<div class="row">
 									<div class="col-xl-2">
 										<h4>Change password</h4>
@@ -248,7 +246,16 @@
 											<div class="col-xl-6">
 												<div class="my_profile_setting_input form-group">
 											    	<label for="formGroupExampleOldPass">Old Password</label>
-											    	<input type="text" class="form-control" id="formGroupExampleOldPass" placeholder="alitfn">
+											    	<input name='current_password' type="text" class="form-control" id="formGroupExampleOldPass">
+													{% if changer_form.current_password.errors %}
+													<div class="error">
+														{% for error in changer_form.current_password.errors%}
+														<ul>
+															<li>{{error}}</li>
+														</ul>
+														{% endfor %}
+													</div>
+													{% endif %}
 												</div>
 											</div>
 										</div>
@@ -256,24 +263,43 @@
 											<div class="col-lg-6 col-xl-6">
 												<div class="my_profile_setting_input form-group">
 											    	<label for="formGroupExampleNewPass">New Password</label>
-											    	<input type="text" class="form-control" id="formGroupExampleNewPass">
+											    	<input name='new_password1' type="text" class="form-control" id="formGroupExampleNewPass">
+													{% if changer_form.new_password1.errors %}
+													<div class="error">
+														{% for error in changer_form.new_password1.errors%}
+														<ul>
+															<li>{{error}}</li>
+														</ul>
+														{% endfor %}
+													</div>
+													{% endif %}
 												</div>
 											</div>
 											<div class="col-lg-6 col-xl-6">
 												<div class="my_profile_setting_input form-group">
 											    	<label for="formGroupExampleConfPass">Confirm New Password</label>
-											    	<input type="text" class="form-control" id="formGroupExampleConfPass">
+											    	<input name='new_password2' type="text" class="form-control" id="formGroupExampleConfPass">
+													{% if changer_form.new_password2.errors %}
+													<div class="error">
+														{% for error in changer_form.new_password2.errors%}
+														<ul>
+															<li>{{error}}</li>
+														</ul>
+														{% endfor %}
+													</div>
+													{% endif %}
 												</div>
 											</div>
 											<div class="col-xl-12">
 												<div class="my_profile_setting_input float-right fn-520">
-													<button class="btn btn2">Update Profile</button>
+													<button name='change_password' type='submit' class="btn btn2">Update Profile</button>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
+						</form>
 
 							<div class="my_dashboard_review mt30">
 								<div class="row">
@@ -329,41 +355,69 @@
 			const fileInput = document.getElementById('file-upload');
 			const hiddenFileInput = document.getElementById('hidden-file-upload');
 			const fileListDisplay = document.getElementById('file-list-display');
-			let fileList = [];
-		
+			let fileList = []; // Array to keep track of files
+			let fileNames = new Set(); // Set to keep track of file names
+	
 			// Function to update the hidden file input and display
 			function updateFileList() {
 				// Clear file list display
 				fileListDisplay.innerHTML = '';
-		
+	
 				// Create a DataTransfer object to manipulate the files list
 				const dataTransfer = new DataTransfer();
-		
+	
 				// Add each file to the DataTransfer object and the list display
 				fileList.forEach(file => {
 					dataTransfer.items.add(file);
-		
+	
 					const listItem = document.createElement('li');
 					listItem.textContent = file.name;
+					
+					// Create close icon
+					const icon = document.createElement('i');
+					icon.classList.add('fa-solid', 'fa-square-xmark', 'close');
+					icon.id = `close-${file.name}`; // Ensure unique ID for each close icon
+					
+					// Append icon to list item
+					listItem.appendChild(icon);
+					
+					// Append list item to display
 					fileListDisplay.appendChild(listItem);
+	
+					// Add event listener for close icon
+					icon.addEventListener('click', function() {
+						// Remove file from the fileList array
+						fileList = fileList.filter(f => f.name !== file.name);
+						fileNames.delete(file.name); // Remove from the fileNames set
+	
+						// Update the hidden input and display
+						updateFileList();
+					});
 				});
-		
+	
 				// Update the hidden input with the new file list
 				hiddenFileInput.files = dataTransfer.files;
 			}
-		
+	
 			// Event listener for changes in the file input
 			fileInput.addEventListener('change', function() {
 				// Add new files to the fileList array
 				Array.from(fileInput.files).forEach(file => {
-					fileList.push(file);
+					if (!fileNames.has(file.name)) {
+						fileList.push(file);
+						fileNames.add(file.name); // Add file name to the set
+					}
 				});
-		
+	
 				// Update the hidden file input and display
 				updateFileList();
+				
+				// Clear the file input to allow re-uploading the same file
+				fileInput.value = '';
 			});
 		});
 	</script>
+	
 	{% endif %}
 	<script>
 		document.addEventListener('DOMContentLoaded', function() {
