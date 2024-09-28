@@ -122,3 +122,7 @@ class PasswordChangeForm(forms.Form):
             if password != password_confirm:
                 raise forms.ValidationError('New passwords do not match.')
         return cleaned_data
+    
+
+class DeletePasswordForm(forms.Form):
+    password = forms.CharField(max_length=100)

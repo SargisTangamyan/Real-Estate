@@ -1,16 +1,17 @@
 from typing import Any
 from django.db.models.base import Model as Model
 from django.db.models.query import QuerySet
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.text import slugify
 from django.views.generic import DetailView
 from phonenumbers  import format_number, PhoneNumberFormat
 import phonenumbers
-from django.contrib.auth import authenticate
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import authenticate, logout, update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 # From the application
-from .forms import CompanyForm, UserForm, PrivateEntrepreneurForm, SocialForm, PasswordChangeForm
+from .forms import CompanyForm, UserForm, PrivateEntrepreneurForm, SocialForm, PasswordChangeForm, DeletePasswordForm
 
 # From main
 from main.models import CustomUser, CompanyProfile, AgentProfile, PrivateEntrepreneurProfile, SimpleUserProfile, UploadedFile, Social
@@ -46,7 +47,7 @@ def get_form(user):
 # The end 
 
 
-
+@login_required
 def my_profile(request):
     # Getting the model and the form for the user
     model_base = get_model(request.user)    
@@ -66,14 +67,6 @@ def my_profile(request):
     
     form_social = SocialForm(instance=social) if social else SocialForm()
 
-    # Giving the name of the documents if there are any
-    documents = None
-    if user_profile and request.user.user_documents.exists():
-        documents = []
-        for document in request.user.user_documents.all():
-            file_name = document.file.name.split('/')[-1]  # Extract the file name from the path
-            documents.append(file_name)
-        
     changer_form = None
 
     # The post request handling
@@ -99,11 +92,13 @@ def my_profile(request):
                 user.save()
 
                 # Saving the files
-                uploaded_file_instance = UploadedFile.objects.filter(user=request.user).first()
-                if uploaded_file_instance:
-                    uploaded_file_instance.delete_user_files()
-                for file in form.cleaned_data['files']:
-                    UploadedFile.objects.create(user=request.user, file=file)
+                if form.cleaned_data.get('files'):
+                    uploaded_file_instance = UploadedFile.objects.filter(user=request.user).first()
+                    if uploaded_file_instance:
+                        uploaded_file_instance.delete_user_files()
+                
+                    for file in form.cleaned_data['files']:
+                        UploadedFile.objects.create(user=request.user, file=file)
 
                 # Optionally add a success message or redirect
             else:
@@ -135,8 +130,33 @@ def my_profile(request):
                 update_session_auth_hash(request, user) # For keeping the user logged in 
             else:
                 print(changer_form.errors)
+            
+        elif 'delete_account' in request.POST:
+            delete_form = DeletePasswordForm(request.POST)
+            if delete_form.is_valid():
+                if request.user.check_password(delete_form.cleaned_data['password']):
+                    delete_user = request.user
+                    delete_user.is_active = False
+                    delete_user.save()
+                    logout(request)
+                    return JsonResponse({'success': True})
+
+                else:
+                    # Return a JSON response for incorrect password
+                    return JsonResponse({'success': False}, status=400)
+            else:
+                # Return a JSON response for invalid form submission
+                return JsonResponse({'success': False}, status=400) 
    
     form = form_class(instance=user_profile) if user_profile else form_class()
+
+    # Giving the name of the documents if there are any
+    documents = None
+    if user_profile and request.user.user_documents.exists():
+        documents = []
+        for document in request.user.user_documents.all():
+            file_name = document.file.name.split('/')[-1]  # Extract the file name from the path
+            documents.append(file_name)
 
     context = {
         'hide_footer': True,
