@@ -400,7 +400,7 @@ p {
 								</div>
 							</div>
 						</form>
-						<form action="" method="post"> {% csrf_token %}
+						<form id="deleteForm" method="post"> {% csrf_token %}
 							<div class="my_dashboard_review mt30">
 								<div class="row">
 									<div class="col-xl-2">
@@ -583,6 +583,16 @@ p {
 		const errorBlock = document.getElementById('deleterror');
 		// const loadingIndicator = document.getElementById('loadingIndicator'); // Add an element for loading feedback
 
+		// Function to show the preloader
+		function showPreloader() {
+			document.getElementById('preloader').style.display = 'block';
+		}
+
+		// Function to hide the preloader
+		function hidePreloader() {
+			$('.preloader').delay(200).fadeOut(300);
+		}
+
 		const deleteUrl = ''; // Replace with your URL
 
 		// Show the modal when delete button is clicked
@@ -609,6 +619,8 @@ p {
 			const password = passwordInput.value;
 			console.log(password)
 
+			showPreloader();
+
 			if (password) {
 				const formData = new URLSearchParams();
 				formData.append('delete_account', 'true');
@@ -627,18 +639,22 @@ p {
 				.then(response => {
 					// loadingIndicator.style.display = 'none'; // Hide loading indicator
 					if (response.ok) {
+						hidePreloader();
 						// Redirect to the homepage after successful account deletion
 						window.location.href = '/'; // Replace '/' with your actual homepage URL if different
 					} else {
+						hidePreloader();
 						handleErrorResponse(response);
 					}
 				})
 				.catch(error => {
 					// loadingIndicator.style.display = 'none'; // Hide loading indicator on error
+					hidePreloader();
 					console.error('Error:', error);
 					alert('An error occurred while processing your request. Please try again.');
 				});
 			} else {
+				hidePreloader();
 				errorBlock.classList.remove('d-none'); // Show error if password is empty
 			}
 		});
