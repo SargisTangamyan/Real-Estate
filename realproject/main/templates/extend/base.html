@@ -91,6 +91,153 @@
 		border: 2px solid #fff; /* Optional: Adds a border for better visibility */
 	}
 
+	/* ---------------------------------------The styling of the message box */
+	.message-box-container {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.5); /* Dark background to dim other content */
+		backdrop-filter: blur(8px); /* Blurs the background behind the message box */
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 10; /* Ensures it's on top of other content */
+	  }
+	.message-box {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%); /* Centers the box */
+		width: 400px;
+		background-color: white; /* Slightly transparent background */
+		border-radius: 10px;
+		box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Soft shadow */
+		backdrop-filter: blur(8px); /* Adds blur to the message box background */
+		padding: 20px;
+		z-index: 10; /* Ensures the message box is above everything */
+		word-wrap: break-word; /* Breaks long words to fit inside the box */
+		word-break: break-word; /* Ensures the text breaks if necessary */
+		white-space: normal; /* Ensures normal wrapping of text */
+		max-width: 90%; /* Ensures it fits on smaller screens */
+
+		/* Flexbox to center content */
+		display: flex;
+		flex-direction: column;
+		justify-content: center; /* Center vertically */
+		align-items: center; /* Center horizontally */
+		text-align: center; /* Ensure the text is centered */
+		height: 200px; /* Define a height for vertical centering */
+	  }
+	  
+	  /* Colored line wrapping around the box near the border */
+	  .message-box::before {
+		content: '';
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		right: 10px;
+		bottom: 10px;
+		border: 2px solid transparent;
+		border-radius: 8px;
+		z-index: -1;
+	  }
+	  
+	  /* Different border colors for message importance levels */
+	  .message-box.info::before {
+		box-shadow: 0 0 0 4px #3498db; /* Blue for info */
+	  }
+
+	  .message-box.error::before {
+		box-shadow: 0 0 0 2px #e74c3c; /* Red line for error */
+	  }
+	  
+	  .message-box.success::before {
+		box-shadow: 0 0 0 4px #2ecc71; /* Green for success */
+	  }
+
+	  .message-box.warning::before {
+		box-shadow: 0 0 0 4px #c7e135; /* Yellow for warning */
+	  }
+	  
+	  /* Header containing the close button */
+	  .message-header {
+		display: flex;
+		justify-content:center;
+	  }
+
+	  .message-header.error h2{
+		color: #e74c3c;
+	  }
+	  .message-header.info h2{
+		color: #3498db;
+	  }
+	  .message-header.success h2{
+		color: #2ecc71;
+	  }
+	  .message-header.warning h2{
+		color: #c7e135;
+	  }
+	  
+	  /* Close button style */
+	  .close-btn {
+		font-size: 24px;
+		cursor: pointer;
+		color: #333;
+		position: absolute;
+		top: -16px; /* Move half of the button outside vertically */
+		right: -16px; /* Move half of the button outside horizontally */
+		width: 30px;
+		height: 30px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		transition: color 0.3s, background-color 0.3s;
+	  }
+
+	  .close-btn.error {
+		color: #e74c3c;
+	  }
+	  .close-btn.info {
+		color: #3498db;
+	  }
+	  .close-btn.success {
+		color: #2ecc71;
+	  }
+	  .close-btn.warning {
+		color: #c7e135;
+	  }
+
+	  
+	  .close-btn.error:hover {
+		color: #d82929;
+	  }
+	  .close-btn.info:hover {
+		color: #4357e8;
+	  }
+	  .close-btn.success:hover {
+		color: #2fc117;
+	  }
+	  .close-btn.warning:hover {
+		color: #bec121;
+	  }
+	  
+	  /* Content inside the message */
+	  .message-content {
+		padding: 10px 0;
+		font-size: 16px;
+		color: #333;
+	  }
+	  
+	  /* Optional: fade-out effect */
+	  .message-box-container.hide {
+		opacity: 0;
+		transition: opacity 0.4s ease;
+		pointer-events: none; /* Prevent interaction when hidden */
+	  }
+	  
+
 	{% block additional_css %}{% endblock additional_css %}
 	
 </style>
@@ -98,6 +245,22 @@
 <body>
 <div class="wrapper">
 	<div id="preloader" class="preloader"></div>
+
+	{% if messages %}
+	{% for message in messages %}
+	<div id="message-box" class="message-box-container">
+		<div class="message-box {{message.tags}}">
+			<span class="close-btn {{message.tags}}" id="close-btn"><i class="fa-solid fa-rectangle-xmark"></i></span>
+			<div class="message-header {{message.tags}}">
+				<h2>{{message.tags|capfirst}}</h2>
+			</div>
+			<div class="message-content">
+			{{ message }}
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+	{% endif %}
 
 	<!-- Main Header Nav -->
 	<header class="header-nav menu_style_home_one style2 style3 navbar-scrolltofixed stricky main-menu">
@@ -933,5 +1096,11 @@
 
 	</script>
 
+	<script> 
+		document.getElementById('close-btn').addEventListener('click', function() {
+			const messageBox = document.getElementById('message-box');
+			messageBox.classList.add('hide');
+		});
+	</script>
 </body>
 </html>

@@ -346,7 +346,7 @@ p {
 											<div class="col-xl-6">
 												<div class="my_profile_setting_input form-group">
 											    	<label for="formGroupExampleOldPass">Old Password</label>
-											    	<input name='current_password' type="text" class="form-control" id="formGroupExampleOldPass">
+											    	<input name='current_password' type="password" class="form-control" id="formGroupExampleOldPass">
 													{% if changer_form.current_password.errors %}
 													<div class="error">
 														{% for error in changer_form.current_password.errors%}
@@ -363,7 +363,7 @@ p {
 											<div class="col-lg-6 col-xl-6">
 												<div class="my_profile_setting_input form-group">
 											    	<label for="formGroupExampleNewPass">New Password</label>
-											    	<input name='new_password1' type="text" class="form-control" id="formGroupExampleNewPass">
+											    	<input name='new_password1' type="password" class="form-control" id="formGroupExampleNewPass">
 													{% if changer_form.new_password1.errors %}
 													<div class="error">
 														{% for error in changer_form.new_password1.errors%}
@@ -378,7 +378,7 @@ p {
 											<div class="col-lg-6 col-xl-6">
 												<div class="my_profile_setting_input form-group">
 											    	<label for="formGroupExampleConfPass">Confirm New Password</label>
-											    	<input name='new_password2' type="text" class="form-control" id="formGroupExampleConfPass">
+											    	<input name='new_password2' type="password" class="form-control" id="formGroupExampleConfPass">
 													{% if changer_form.new_password2.errors %}
 													<div class="error">
 														{% for error in changer_form.new_password2.errors%}
@@ -590,7 +590,7 @@ p {
 
 		// Function to hide the preloader
 		function hidePreloader() {
-			$('.preloader').delay(200).fadeOut(300);
+			$('.preloader').delay(300).fadeOut(300);
 		}
 
 		const deleteUrl = ''; // Replace with your URL

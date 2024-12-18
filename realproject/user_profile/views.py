@@ -9,6 +9,7 @@ import phonenumbers
 from django.contrib.auth import authenticate, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.contrib import messages
 
 # From the application
 from .forms import CompanyForm, UserForm, PrivateEntrepreneurForm, SocialForm, PasswordChangeForm, DeletePasswordForm
@@ -127,8 +128,10 @@ def my_profile(request):
                 user = request.user
                 user.set_password(new_password)
                 user.save()
-                update_session_auth_hash(request, user) # For keeping the user logged in 
+                update_session_auth_hash(request, user) # For keeping the user logged in
+                messages.success(request, "The password is changed successfully.") 
             else:
+                messages.error(request, "Error occurred while trying to change the password.")
                 print(changer_form.errors)
             
         elif 'delete_account' in request.POST:
@@ -139,6 +142,7 @@ def my_profile(request):
                     delete_user.is_active = False
                     delete_user.save()
                     logout(request)
+                    messages.info(request, 'Your account has been deleted')
                     return JsonResponse({'success': True})
 
                 else:
