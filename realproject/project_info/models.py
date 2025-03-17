@@ -32,7 +32,7 @@ class ContactUs(models.Model):
     phone2 = PhoneNumberField(verbose_name='Phone 2', null=True, blank=True)
     country = models.CharField(verbose_name='Country', max_length=100, null=True)
     mail = models.EmailField(verbose_name="Mail")
-    linkedin = models.CharField(verbose_name="Linkedin")
+    linkedin = models.CharField(verbose_name="Linkedin", max_length=100, null=True)
     facebook = models.URLField()
     twitter = models.URLField()
     instagram = models.URLField()
