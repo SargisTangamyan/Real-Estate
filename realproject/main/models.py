@@ -21,6 +21,8 @@ class CustomUserManager(BaseUserManager):
         # Ensure that `is_staff` and `is_superuser` are set to True
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('service_provider', 'US')  # Default to Simple User
+        extra_fields.setdefault('service', 'SE')  # Seller (or choose a default service)
         
         # Create the user with the provided fields
         user = self.create_user(email, password, **extra_fields)
